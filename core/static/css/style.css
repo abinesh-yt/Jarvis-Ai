@@ -209,3 +209,8 @@ pre{
     padding:10px 14px;
     cursor:pointer;
 }
+.speak-btn{
+    margin-top:10px;
+    cursor:pointer;
+    padding:5px 10px;
+}

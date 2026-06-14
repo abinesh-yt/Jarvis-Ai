@@ -13,9 +13,18 @@
 
             <div class="message-bubble">
 
-                {{ message.content|markdownify }}
+    {{ message.content|markdownify }}
 
-            </div>
+    {% if message.role == "assistant" %}
+        <button
+            class="speak-btn"
+            data-text="{{ message.content }}"
+        >
+            🔊
+        </button>
+    {% endif %}
+
+</div>
 
         </div>
 
