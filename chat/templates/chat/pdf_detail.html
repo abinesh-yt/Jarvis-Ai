@@ -10,7 +10,10 @@
 
     {% csrf_token %}
 
-    <button type="submit">
+    <button
+        type="submit"
+        name="summarize"
+    >
         Summarize PDF 🤖
     </button>
 
@@ -25,6 +28,42 @@
     <p>
 
         {{ summary }}
+
+    </p>
+
+{% endif %}
+
+<hr>
+
+<h3>Ask PDF 🤖</h3>
+
+<form method="POST">
+
+    {% csrf_token %}
+
+    <input
+        type="text"
+        name="question"
+        placeholder="Ask about this PDF..."
+        required
+    >
+
+    <button
+        type="submit"
+        name="ask"
+    >
+        Ask
+    </button>
+
+</form>
+
+{% if answer %}
+
+    <h4>Answer</h4>
+
+    <p>
+
+        {{ answer }}
 
     </p>
 

@@ -142,31 +142,72 @@ def pdf_detail(request, pdf_id):
             text += page_text
 
     summary = None
+    question = ""
+    answer = None
 
     if request.method == "POST":
 
-        prompt = f"""
-        Summarize this PDF in simple language:
+        if "summarize" in request.POST:
 
-        {text[:8000]}
-        """
+            prompt = f"""
+            Summarize this PDF in simple language:
 
-        completion = client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
-            messages=[
-                {
-                    "role": "user",
-                    "content": prompt
-                }
-            ]
-        )
+            {text[:8000]}
+            """
 
-        summary = (
-            completion
-            .choices[0]
-            .message
-            .content
-        )
+            completion = client.chat.completions.create(
+                model="llama-3.3-70b-versatile",
+                messages=[
+                    {
+                        "role": "user",
+                        "content": prompt
+                    }
+                ]
+            )
+
+            summary = (
+                completion
+                .choices[0]
+                .message
+                .content
+            )
+
+        elif "ask" in request.POST:
+
+            question = request.POST.get(
+                "question",
+                ""
+            )
+
+            prompt = f"""
+            Answer the question only
+            using the PDF content.
+
+            PDF:
+
+            {text[:8000]}
+
+            Question:
+
+            {question}
+            """
+
+            completion = client.chat.completions.create(
+                model="llama-3.3-70b-versatile",
+                messages=[
+                    {
+                        "role": "user",
+                        "content": prompt
+                    }
+                ]
+            )
+
+            answer = (
+                completion
+                .choices[0]
+                .message
+                .content
+            )
 
     return render(
         request,
@@ -174,7 +215,9 @@ def pdf_detail(request, pdf_id):
         {
             "pdf": pdf,
             "text": text[:10000],
-            "summary": summary
+            "summary": summary,
+            "question": question,
+            "answer": answer,
         }
     )
     
