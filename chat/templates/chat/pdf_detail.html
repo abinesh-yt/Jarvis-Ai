@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>
+    {{ pdf.file.name }}
+</h2>
+
+<form method="POST">
+
+    {% csrf_token %}
+
+    <button type="submit">
+        Summarize PDF 🤖
+    </button>
+
+</form>
+
+{% if summary %}
+
+    <hr>
+
+    <h3>Summary</h3>
+
+    <p>
+
+        {{ summary }}
+
+    </p>
+
+{% endif %}
+
+<hr>
+
+<h3>Extracted Text</h3>
+
+<pre>
+
+{{ text }}
+
+</pre>
+
+{% endblock %}

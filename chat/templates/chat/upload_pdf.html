@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Upload PDF 📄</h2>
+
+<form
+    method="POST"
+    enctype="multipart/form-data"
+>
+
+    {% csrf_token %}
+
+    {{ form.as_p }}
+
+    <button type="submit">
+        Upload
+    </button>
+
+</form>
+
+<hr>
+
+<h3>Your PDFs</h3>
+
+{% for pdf in pdfs %}
+
+    <p>
+
+    <a href="{% url 'pdf_detail' pdf.id %}">
+
+        {{ pdf.file.name }}
+
+    </a>
+
+</p>
+
+{% empty %}
+
+    <p>No PDFs uploaded yet.</p>
+
+{% endfor %}
+
+{% endblock %}

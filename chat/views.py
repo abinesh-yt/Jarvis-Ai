@@ -3,6 +3,12 @@ from django.contrib.auth.decorators import login_required
 from .models import ChatSession
 from .models import ChatSession, Message
 from .ai import get_ai_response
+from .models import PDFFile
+from .forms import PDFUploadForm
+from pypdf import PdfReader
+from groq import Groq
+import os
+
 
 
 @login_required
@@ -76,3 +82,102 @@ def chat_detail(request, chat_id):
             'messages': messages
         }
     )
+    
+    
+@login_required
+def upload_pdf(request):
+
+    if request.method == "POST":
+
+        form = PDFUploadForm(
+            request.POST,
+            request.FILES
+        )
+
+        if form.is_valid():
+
+            pdf = form.save(commit=False)
+
+            pdf.user = request.user
+
+            pdf.save()
+
+            return redirect("upload_pdf")
+
+    else:
+
+        form = PDFUploadForm()
+
+    pdfs = PDFFile.objects.filter(
+        user=request.user
+    ).order_by("-uploaded_at")
+
+    return render(
+        request,
+        "chat/upload_pdf.html",
+        {
+            "form": form,
+            "pdfs": pdfs
+        }
+    )
+    
+
+@login_required
+def pdf_detail(request, pdf_id):
+
+    pdf = PDFFile.objects.get(
+        id=pdf_id,
+        user=request.user
+    )
+
+    reader = PdfReader(pdf.file.path)
+
+    text = ""
+
+    for page in reader.pages:
+
+        page_text = page.extract_text()
+
+        if page_text:
+            text += page_text
+
+    summary = None
+
+    if request.method == "POST":
+
+        prompt = f"""
+        Summarize this PDF in simple language:
+
+        {text[:8000]}
+        """
+
+        completion = client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=[
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ]
+        )
+
+        summary = (
+            completion
+            .choices[0]
+            .message
+            .content
+        )
+
+    return render(
+        request,
+        "chat/pdf_detail.html",
+        {
+            "pdf": pdf,
+            "text": text[:10000],
+            "summary": summary
+        }
+    )
+    
+client = Groq(
+    api_key=os.getenv("GROQ_API_KEY")
+)
