@@ -1,0 +1,48 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>JARVIS AI</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<body>
+    <button id="menu-btn">
+    ☰ Menu
+</button>
+
+    <div class="container">
+
+        <aside class="sidebar" id="sidebar">
+
+            <h2>JARVIS AI</h2>
+
+            <ul>
+                <li><a href="/dashboard/">Dashboard</a></li>
+                <li><a href="/chat/">Chat</a></li>
+                <li><a href="#">Memory</a></li>
+                <li><a href="#">Documents</a></li>
+                <li><a href="#">Settings</a></li>
+                <li><a href="/accounts/logout/">Logout</a></li>
+            </ul>
+
+        </aside>
+
+        <main class="content">
+
+            {% block content %}
+            {% endblock %}
+
+        </main>
+
+    </div>
+
+    <script src="{% static 'js/app.js' %}"></script>
+
+</body>
+</html>

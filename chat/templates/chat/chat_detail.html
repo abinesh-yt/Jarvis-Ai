@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% load markdown_filters %}
+
+{% block content %}
+
+<h1>{{ chat.title }}</h1>
+
+<div class="chat-box" id="chat-box">
+
+    {% for message in messages %}
+
+        <div class="message-wrapper {{ message.role }}">
+
+            <div class="message-bubble">
+
+                {{ message.content|markdownify }}
+
+            </div>
+
+        </div>
+
+    {% empty %}
+
+        <p>Start a conversation with JARVIS 🤖</p>
+
+    {% endfor %}
+
+</div>
+
+<form method="POST" class="chat-form" id="chat-form">
+
+    {% csrf_token %}
+
+    <textarea
+    name="message"
+    id="message-input"
+    placeholder="Message JARVIS..."
+    required
+></textarea>
+
+    <button type="submit">
+        Send
+    </button>
+
+</form>
+
+<div id="thinking-indicator" style="display:none; margin-top:10px;">
+    🤖 JARVIS is thinking...
+</div>
+
+{% endblock %}

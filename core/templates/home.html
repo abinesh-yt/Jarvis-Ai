@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JARVIS AI</title>
+</head>
+<body>
+
+<h1>JARVIS AI</h1>
+
+{% if user.is_authenticated %}
+
+    <h2>Welcome {{ user.username }}</h2>
+
+    <a href="/accounts/logout/">Logout</a>
+
+{% else %}
+
+    <h2>Not Logged In</h2>
+
+    <a href="/accounts/login/">Login</a>
+    <br>
+    <a href="/accounts/register/">Register</a>
+
+{% endif %}
+
+</body>
+</html>

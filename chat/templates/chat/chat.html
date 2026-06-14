@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>JARVIS Chats</h1>
+
+<p>
+    <a href="/chat/new/">+ New Chat</a>
+</p>
+
+<hr>
+
+{% for chat in chats %}
+
+<p>
+    <a href="/chat/{{ chat.id }}/">
+        {{ chat.title }}
+    </a>
+</p>
+
+{% empty %}
+
+<p>No chats yet.</p>
+
+{% endfor %}
+
+{% endblock %}
