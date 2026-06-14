@@ -204,3 +204,8 @@ pre{
     flex-direction:column;
     gap:15px;
 }
+
+#mic-btn{
+    padding:10px 14px;
+    cursor:pointer;
+}
