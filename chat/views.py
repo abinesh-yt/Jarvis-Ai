@@ -54,6 +54,66 @@ def chat_detail(request, chat_id):
     if request.method == "POST":
 
         content = request.POST.get("message")
+        
+        if content.lower().startswith("remember"):
+
+            Memory.objects.create(
+                user=request.user,
+                content=content
+            )
+
+            Message.objects.create(
+                chat=chat,
+                role="assistant",
+                content="🧠 Memory saved successfully!"
+            )
+
+            return redirect(f"/chat/{chat.id}/")
+        elif content.lower().startswith("forget"):
+
+            keyword = content.replace(
+                "forget",
+                ""
+            ).strip()
+
+            memories = Memory.objects.filter(
+                user=request.user,
+                content__icontains=keyword
+            )
+
+            count = memories.count()
+
+            memories.delete()
+
+            Message.objects.create(
+                chat=chat,
+                role="assistant",
+                content=f"🗑️ Deleted {count} memory(s)."
+            )
+
+            return redirect(f"/chat/{chat.id}/")
+        
+        
+        elif content.lower() == "show memories":
+
+            memories = Memory.objects.filter(
+                user=request.user
+            )
+
+            memory_list = "\n".join(
+                [
+                    f"• {m.content}"
+                    for m in memories
+                ]
+            )
+
+            Message.objects.create(
+                chat=chat,
+                role="assistant",
+                content=f"🧠 Your Memories:\n\n{memory_list}"
+            )
+
+            return redirect(f"/chat/{chat.id}/")
 
         if content:
 
