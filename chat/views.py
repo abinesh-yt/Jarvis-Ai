@@ -8,6 +8,10 @@ from .forms import PDFUploadForm
 from pypdf import PdfReader
 from groq import Groq
 import os
+from .models import ImageFile
+from .forms import ImageUploadForm
+import google.generativeai as genai
+import PIL.Image
 
 
 
@@ -221,6 +225,88 @@ def pdf_detail(request, pdf_id):
         }
     )
     
+    
+
+    
 client = Groq(
     api_key=os.getenv("GROQ_API_KEY")
 )
+print("Gemini Key:", os.getenv("GEMINI_API_KEY")[:10])
+genai.configure(
+    api_key=os.getenv("GEMINI_API_KEY")
+)
+@login_required
+def upload_image(request):
+
+    if request.method == "POST":
+
+        form = ImageUploadForm(
+            request.POST,
+            request.FILES
+        )
+
+        if form.is_valid():
+
+            image = form.save(commit=False)
+
+            image.user = request.user
+
+            image.save()
+
+            return redirect("upload_image")
+
+    else:
+
+        form = ImageUploadForm()
+
+    images = ImageFile.objects.filter(
+        user=request.user
+    ).order_by("-uploaded_at")
+
+    return render(
+        request,
+        "chat/upload_image.html",
+        {
+            "form": form,
+            "images": images
+        }
+    )
+    
+@login_required
+def image_detail(request, image_id):
+
+    image = ImageFile.objects.get(
+        id=image_id,
+        user=request.user
+    )
+
+    analysis = None
+
+    if request.method == "POST":
+
+        model = genai.GenerativeModel(
+            "gemini-flash-latest"
+        )
+
+        uploaded_image = PIL.Image.open(
+            image.image.path
+        )
+
+        print("Image Path:", image.image.path)
+        print("Image Size:", uploaded_image.size)
+
+        response = model.generate_content([
+            "Describe this image in detail.",
+            uploaded_image
+        ])
+
+        analysis = response.text
+
+    return render(
+        request,
+        "chat/image_detail.html",
+        {
+            "image": image,
+            "analysis": analysis
+        }
+    )

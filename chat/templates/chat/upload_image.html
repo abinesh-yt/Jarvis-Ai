@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Upload Image 🖼️</h2>
+
+<form
+    method="POST"
+    enctype="multipart/form-data"
+>
+
+    {% csrf_token %}
+
+    {{ form.as_p }}
+
+    <button type="submit">
+        Upload
+    </button>
+
+</form>
+
+<hr>
+
+<h3>Your Images</h3>
+
+{% for image in images %}
+
+    <p>
+
+       <a href="{% url 'image_detail' image.id %}">
+    {{ image.image.name }}
+</a>
+
+    </p>
+
+{% empty %}
+
+    <p>No images uploaded yet.</p>
+
+{% endfor %}
+
+{% endblock %}

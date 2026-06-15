@@ -7,3 +7,8 @@ admin.site.register(Message)
 from .models import PDFFile
 
 admin.site.register(PDFFile)
+
+
+from .models import ImageFile
+
+admin.site.register(ImageFile)

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Image Analysis 🖼️</h2>
+
+<img
+    src="{{ image.image.url }}"
+    style="
+        max-width:500px;
+        width:100%;
+    "
+>
+
+<hr>
+
+<form method="POST">
+
+    {% csrf_token %}
+
+    <button type="submit">
+        Analyze Image 🤖
+    </button>
+
+</form>
+
+{% if analysis %}
+
+    <hr>
+
+    <h3>Analysis</h3>
+
+    <p>
+
+        {{ analysis }}
+
+    </p>
+
+{% endif %}
+
+{% endblock %}
