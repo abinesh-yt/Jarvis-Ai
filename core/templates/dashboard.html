@@ -2,8 +2,244 @@
 
 {% block content %}
 
-<h1>JARVIS Dashboard</h1>
+<div class="page-header">
 
-<p>Welcome {{ user.username }}</p>
+
+<div class="card-badge">
+    🚀 AI Workspace
+</div>
+
+<h1>
+    Welcome Back, {{ user.username }} 👋
+</h1>
+
+<p>
+    Access all your AI tools, memories, chats, documents and insights from one place.
+</p>
+
+
+</div>
+
+<div class="stats-grid">
+
+
+<div class="stat-card">
+
+    <h2>{{ chat_count }}</h2>
+
+    <p>💬 Chats</p>
+
+</div>
+
+<div class="stat-card">
+
+    <h2>{{ pdf_count }}</h2>
+
+    <p>📄 PDFs</p>
+
+</div>
+
+<div class="stat-card">
+
+    <h2>{{ image_count }}</h2>
+
+    <p>🖼️ Images</p>
+
+</div>
+
+<div class="stat-card">
+
+    <h2>{{ memory_count }}</h2>
+
+    <p>🧠 Memories</p>
+
+</div>
+
+
+</div>
+
+<div class="dashboard-section">
+
+
+<h2>⚡ Recent Activity</h2>
+
+<div class="activity-list">
+
+    {% for chat in recent_chats %}
+
+        <a
+            href="/chat/{{ chat.id }}/"
+            class="activity-card"
+        >
+
+            💬 {{ chat.title }}
+
+        </a>
+
+    {% empty %}
+
+        <div class="activity-card">
+
+            No recent chats
+
+        </div>
+
+    {% endfor %}
+
+</div>
+
+
+</div>
+
+<div class="dashboard-section">
+
+
+<h2>📄 Recent PDFs</h2>
+
+<div class="activity-list">
+
+    {% for pdf in recent_pdfs %}
+
+        <div class="activity-card">
+
+            📄 {{ pdf.file.name }}
+
+        </div>
+
+    {% empty %}
+
+        <div class="activity-card">
+
+            No PDFs uploaded yet
+
+        </div>
+
+    {% endfor %}
+
+</div>
+
+
+</div>
+
+<div class="dashboard-section">
+
+
+<h2>🤖 AI Tools</h2>
+
+
+</div>
+
+<div class="dashboard-grid">
+
+
+<a href="/chat/" class="dashboard-card">
+
+    <h2>💬 AI Chat</h2>
+
+    <p>
+        Talk with JARVIS using Groq AI, voice input and voice output.
+    </p>
+
+    <div class="feature-tags">
+
+        <span>Chat</span>
+        <span>Voice</span>
+
+    </div>
+
+</a>
+
+
+<a href="{% url 'upload_pdf' %}" class="dashboard-card">
+
+    <h2>📄 PDF Assistant</h2>
+
+    <p>
+        Upload PDFs, summarize documents and ask questions.
+    </p>
+
+    <div class="feature-tags">
+
+        <span>PDF</span>
+        <span>Q&A</span>
+
+    </div>
+
+</a>
+
+
+<a href="{% url 'upload_image' %}" class="dashboard-card">
+
+    <h2>🖼️ Vision AI</h2>
+
+    <p>
+        Analyze images and ask questions about visual content.
+    </p>
+
+    <div class="feature-tags">
+
+        <span>Vision</span>
+        <span>Gemini</span>
+
+    </div>
+
+</a>
+
+
+<a href="{% url 'website_summarizer' %}" class="dashboard-card">
+
+    <h2>🌐 Website AI</h2>
+
+    <p>
+        Summarize websites instantly using artificial intelligence.
+    </p>
+
+    <div class="feature-tags">
+
+        <span>Web</span>
+        <span>Summary</span>
+
+    </div>
+
+</a>
+
+
+<a href="{% url 'youtube_summarizer' %}" class="dashboard-card">
+
+    <h2>🎥 YouTube AI</h2>
+
+    <p>
+        Summarize YouTube videos without watching the entire video.
+    </p>
+
+    <div class="feature-tags">
+
+        <span>YouTube</span>
+        <span>Summary</span>
+
+    </div>
+
+</a>
+
+
+<a href="{% url 'memories' %}" class="dashboard-card">
+
+    <h2>🧠 Memory AI</h2>
+
+    <p>
+        Let JARVIS remember information and recall it whenever needed.
+    </p>
+
+    <div class="feature-tags">
+
+        <span>Memory</span>
+        <span>Personal AI</span>
+
+    </div>
+
+</a>
+
+
+</div>
 
 {% endblock %}

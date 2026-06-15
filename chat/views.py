@@ -20,6 +20,9 @@ import requests
 from bs4 import BeautifulSoup
 from .forms import WebsiteForm
 
+from youtube_transcript_api import YouTubeTranscriptApi
+from .forms import YouTubeForm
+
 
 
 @login_required
@@ -518,3 +521,86 @@ def website_summarizer(request):
             "summary": summary
         }
     )
+    
+    
+def get_video_id(url):
+
+    if "v=" in url:
+        return url.split("v=")[1].split("&")[0]
+
+    if "youtu.be/" in url:
+        return url.split("youtu.be/")[1].split("?")[0]
+
+    return None
+
+
+@login_required
+def youtube_summarizer(request):
+
+    summary = None
+
+    if request.method == "POST":
+
+        form = YouTubeForm(request.POST)
+
+        if form.is_valid():
+
+            url = form.cleaned_data["url"]
+
+            video_id = get_video_id(url)
+
+            ytt_api = YouTubeTranscriptApi()
+
+            transcript = ytt_api.fetch(video_id)
+
+            text = " ".join(
+    [item.text for item in transcript]
+)
+
+            prompt = f"""
+            Summarize this YouTube video:
+
+            {text[:8000]}
+            """
+
+            completion = client.chat.completions.create(
+                model="llama-3.3-70b-versatile",
+                messages=[
+                    {
+                        "role": "user",
+                        "content": prompt
+                    }
+                ]
+            )
+
+            summary = (
+                completion
+                .choices[0]
+                .message
+                .content
+            )
+
+    else:
+
+        form = YouTubeForm()
+
+    return render(
+        request,
+        "chat/youtube.html",
+        {
+            "form": form,
+            "summary": summary
+        }
+    )
+    
+@login_required
+def delete_chat(request, chat_id):
+
+    chat = ChatSession.objects.get(
+        id=chat_id,
+        user=request.user
+    )
+
+    chat.delete()
+
+    return redirect("/chat/")

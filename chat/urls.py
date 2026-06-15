@@ -46,5 +46,16 @@ urlpatterns = [
     name="website_summarizer"
 ),
     
+    path(
+    "youtube/",
+    views.youtube_summarizer,
+    name="youtube_summarizer"
+),
+    path(
+    "delete/<int:chat_id>/",
+    views.delete_chat,
+    name="delete_chat"
+),
+    
 ]
 

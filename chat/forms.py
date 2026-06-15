@@ -27,3 +27,9 @@ class WebsiteForm(forms.Form):
     url = forms.URLField(
         label="Website URL"
     )
+
+class YouTubeForm(forms.Form):
+
+    url = forms.URLField(
+        label="YouTube URL"
+    )

@@ -2,26 +2,64 @@
 
 {% block content %}
 
-<h1>JARVIS Chats</h1>
+<div class="page-header">
 
-<p>
-    <a href="/chat/new/">+ New Chat</a>
-</p>
+    <h1>💬 JARVIS Chats</h1>
 
-<hr>
+    <p>
+        Continue previous conversations or start a new one.
+    </p>
+
+</div>
+
+<a
+    href="/chat/new/"
+    class="new-chat-btn"
+>
+    ➕ New Chat
+</a>
+
+<div class="chat-grid">
 
 {% for chat in chats %}
 
-<p>
-    <a href="/chat/{{ chat.id }}/">
-        {{ chat.title }}
+<div class="chat-card">
+
+    <a
+        href="/chat/{{ chat.id }}/"
+        class="chat-link"
+    >
+
+        <div class="chat-icon">
+            💬
+        </div>
+
+        <div class="chat-title">
+            {{ chat.title }}
+        </div>
+
     </a>
-</p>
+
+    <a
+        href="{% url 'delete_chat' chat.id %}"
+        class="delete-btn"
+        onclick="return confirm('Delete this chat?')"
+    >
+        🗑️
+    </a>
+
+</div>
 
 {% empty %}
 
-<p>No chats yet.</p>
+<div class="empty-card">
+
+    No chats yet 🤖
+
+</div>
 
 {% endfor %}
+
+</div>
 
 {% endblock %}

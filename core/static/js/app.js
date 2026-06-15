@@ -1,49 +1,91 @@
 const menuBtn = document.getElementById("menu-btn");
 const sidebar = document.getElementById("sidebar");
+const closeBtn = document.getElementById("close-sidebar");
 
 const micBtn = document.getElementById("mic-btn");
 const messageInput = document.getElementById("message-input");
 
+// ======================
+// Sidebar
+// ======================
 
-// Mobile Menu
-if (menuBtn) {
-    menuBtn.addEventListener("click", () => {
-        sidebar.classList.toggle("show");
-    });
+if (menuBtn && sidebar) {
+
+
+menuBtn.addEventListener("click", () => {
+
+    sidebar.classList.add("show");
+
+});
+
+
 }
 
+if (closeBtn && sidebar) {
 
+
+closeBtn.addEventListener("click", () => {
+
+    sidebar.classList.remove("show");
+
+});
+
+
+}
+
+// ======================
 // Auto Scroll
+// ======================
+
 const chatBox = document.getElementById("chat-box");
 
 if (chatBox) {
-    chatBox.scrollTop = chatBox.scrollHeight;
+
+
+chatBox.scrollTop = chatBox.scrollHeight;
+
+
 }
 
-
+// ======================
 // Thinking Indicator
+// ======================
+
 const chatForm = document.getElementById("chat-form");
-const thinkingIndicator = document.getElementById("thinking-indicator");
+const thinkingIndicator =
+document.getElementById("thinking-indicator");
 
 if (chatForm) {
 
-    chatForm.addEventListener("submit", () => {
 
-        if (thinkingIndicator) {
-            thinkingIndicator.style.display = "block";
-        }
+chatForm.addEventListener("submit", () => {
 
-    });
+    if (thinkingIndicator) {
+
+        thinkingIndicator.style.display = "block";
+
+    }
+
+});
+
 
 }
 
+// ======================
+// Enter To Send
+// ======================
 
-// Enter to Send
 if (messageInput && chatForm) {
 
-    messageInput.addEventListener("keydown", function(event) {
 
-        if (event.key === "Enter" && !event.shiftKey) {
+messageInput.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (
+            event.key === "Enter" &&
+            !event.shiftKey
+        ) {
 
             event.preventDefault();
 
@@ -51,118 +93,147 @@ if (messageInput && chatForm) {
 
         }
 
-    });
+    }
+);
+
 
 }
 
-
+// ======================
 // Voice Input
+// ======================
+
 const SpeechRecognition =
-    window.SpeechRecognition ||
-    window.webkitSpeechRecognition;
+window.SpeechRecognition ||
+window.webkitSpeechRecognition;
 
-if (SpeechRecognition && micBtn && messageInput) {
+if (
+SpeechRecognition &&
+micBtn &&
+messageInput
+) {
 
-    const recognition = new SpeechRecognition();
 
-    recognition.lang = "en-US";
+const recognition =
+    new SpeechRecognition();
 
-    recognition.onresult = (event) => {
+recognition.lang = "en-US";
 
-        const text = event.results[0][0].transcript;
+recognition.onresult = (event) => {
 
-        messageInput.value = text;
+    const text =
+        event.results[0][0].transcript;
 
-    };
+    messageInput.value = text;
 
-    recognition.onerror = (event) => {
+};
 
-        console.log("Speech Recognition Error:", event.error);
+recognition.onerror = (event) => {
 
-    };
+    console.log(
+        "Speech Recognition Error:",
+        event.error
+    );
 
-    micBtn.addEventListener("click", () => {
+};
+
+micBtn.addEventListener(
+    "click",
+    () => {
 
         recognition.start();
 
-    });
+    }
+);
+
 
 }
 
-
+// ======================
 // Voice Output
+// ======================
+
 const speakButtons =
-    document.querySelectorAll(".speak-btn");
+document.querySelectorAll(".speak-btn");
 
 function speakText(text) {
 
-    window.speechSynthesis.cancel();
 
-    text = text
-        .replace(/```[\s\S]*?```/g, "")
-        .replace(/`/g, "")
-        .replace(/[#*_>|-]/g, "")
-        .replace(/\n/g, " ")
-        .replace(/\s+/g, " ")
-        .trim();
+window.speechSynthesis.cancel();
 
-    const voices =
-        window.speechSynthesis.getVoices();
+text = text
+    .replace(/```[\s\S]*?```/g, "")
+    .replace(/`/g, "")
+    .replace(/[#*_>|-]/g, "")
+    .replace(/\n/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
 
-    const chunks =
-        text.match(/.{1,200}(\s|$)/g);
+const voices =
+    window.speechSynthesis.getVoices();
 
-    if (!chunks) return;
+const chunks =
+    text.match(/.{1,200}(\s|$)/g);
 
-    let index = 0;
+if (!chunks) return;
 
-    function speakChunk() {
+let index = 0;
 
-        if (index >= chunks.length) {
-            return;
-        }
+function speakChunk() {
 
-        const speech =
-            new SpeechSynthesisUtterance(
-                chunks[index]
-            );
+    if (index >= chunks.length) {
 
-        speech.voice = voices.find(
-            voice =>
-                voice.name === "Google UK English Female"
-                
-        );
-
-        speech.lang = "en-US";
-        speech.rate = 0.9;
-        speech.pitch = 1;
-
-        speech.onend = () => {
-
-            index++;
-
-            speakChunk();
-
-        };
-
-        window.speechSynthesis.speak(
-            speech
-        );
+        return;
 
     }
 
-    speakChunk();
+    const speech =
+        new SpeechSynthesisUtterance(
+            chunks[index]
+        );
+
+    speech.voice = voices.find(
+        voice =>
+            voice.name ===
+            "Google UK English Female"
+    );
+
+    speech.lang = "en-US";
+    speech.rate = 0.9;
+    speech.pitch = 1;
+
+    speech.onend = () => {
+
+        index++;
+
+        speakChunk();
+
+    };
+
+    window.speechSynthesis.speak(
+        speech
+    );
+
+}
+
+speakChunk();
+
 
 }
 
 speakButtons.forEach((button) => {
 
-    button.addEventListener("click", () => {
+
+button.addEventListener(
+    "click",
+    () => {
 
         speakText(
             button.dataset.text
         );
 
-    });
+    }
+);
+
 
 });

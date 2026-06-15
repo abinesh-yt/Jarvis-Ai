@@ -2,32 +2,72 @@
 
 {% block content %}
 
-<h2>My Memories 🧠</h2>
+<div class="page-header">
 
-<form method="POST">
+    <h1>🧠 Memory AI</h1>
 
-    {% csrf_token %}
+    <p>
+        Save important information for JARVIS to remember.
+    </p>
 
-    {{ form.as_p }}
+</div>
 
-    <button type="submit">
-        Save Memory
-    </button>
+<div class="upload-card">
 
-</form>
+    <form method="POST">
 
-<hr>
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <button type="submit">
+            🧠 Save Memory
+        </button>
+
+    </form>
+
+</div>
+
+<div class="section-title">
+
+    <h2>🧠 Your Memories</h2>
+
+</div>
+
+<div class="memory-grid">
 
 {% for memory in memories %}
 
-    <p>
-        🧠 {{ memory.content }}
-    </p>
+    <div class="memory-card">
+
+        <div class="memory-icon">
+
+            🧠
+
+        </div>
+
+        <div class="memory-content">
+
+            {{ memory.content }}
+
+        </div>
+
+    </div>
 
 {% empty %}
 
-    <p>No memories saved yet.</p>
+    <div class="empty-card">
+
+        <h3>No Memories Yet</h3>
+
+        <p>
+            Save your first memory and let JARVIS remember it.
+        </p>
+
+    </div>
 
 {% endfor %}
+
+</div>
 
 {% endblock %}

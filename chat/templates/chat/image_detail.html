@@ -2,17 +2,31 @@
 
 {% block content %}
 
-<h2>Image Analysis 🖼️</h2>
+<div class="page-header">
+
+
+<h1>🤖 Vision AI Assistant</h1>
+
+<p>
+    Analyze images and ask questions using Gemini Vision.
+</p>
+
+
+</div>
+
+<div class="result-card">
+
 
 <img
     src="{{ image.image.url }}"
-    style="
-        max-width:500px;
-        width:100%;
-    "
+    class="vision-preview"
 >
 
-<hr>
+
+</div>
+
+<div class="action-card">
+
 
 <form method="POST">
 
@@ -22,14 +36,18 @@
         type="submit"
         name="analyze"
     >
-        Analyze Image 🤖
+        🔍 Analyze Image
     </button>
 
 </form>
 
-<hr>
 
-<h3>Ask About Image 👀</h3>
+</div>
+
+<div class="action-card">
+
+
+<h2>❓ Ask About Image</h2>
 
 <form method="POST">
 
@@ -38,7 +56,7 @@
     <input
         type="text"
         name="question"
-        placeholder="Ask about this image..."
+        placeholder="Ask anything about this image..."
         required
     >
 
@@ -46,20 +64,47 @@
         type="submit"
         name="ask"
     >
-        Ask
+        🤖 Ask AI
     </button>
 
 </form>
 
+
+</div>
+
+{% if analysis %}
+
+<div class="result-card">
+
+
+<h2>🔍 Analysis</h2>
+
+<div class="result-content">
+
+    {{ analysis }}
+
+</div>
+
+
+</div>
+
+{% endif %}
+
 {% if answer %}
 
-    <h4>Answer</h4>
+<div class="result-card">
 
-    <p>
 
-        {{ answer }}
+<h2>💡 AI Answer</h2>
 
-    </p>
+<div class="result-content">
+
+    {{ answer }}
+
+</div>
+
+
+</div>
 
 {% endif %}
 

@@ -2,49 +2,226 @@
 
 <!DOCTYPE html>
 <html>
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>JARVIS AI</title>
 
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link
+        rel="stylesheet"
+        href="{% static 'css/style.css' %}"
+    >
+
 </head>
 
 <body>
-    <button id="menu-btn">
-    ☰ Menu
+
+<button id="menu-btn">
+    ☰
 </button>
 
-    <div class="container">
+<div class="container">
 
-        <aside class="sidebar" id="sidebar">
+    <aside
+        class="sidebar"
+        id="sidebar"
+    >
 
-            <h2>JARVIS AI</h2>
+        <button id="close-sidebar">
+            ✖
+        </button>
 
-            <ul>
-                <li><a href="/dashboard/">Dashboard</a></li>
-                <li><a href="/chat/">Chat</a></li>
-                <li><a href="#">Memory</a></li>
-                <li><a href="{% url 'upload_pdf' %}">
-    📄 Documents
-</a></li>
-                <li><a href="#">Settings</a></li>
-                <li><a href="/accounts/logout/">Logout</a></li>
-            </ul>
+        <h2 class="logo">
+            🤖 JARVIS AI
+        </h2>
 
-        </aside>
+        <div class="user-card">
 
-        <main class="content">
+            <div class="user-avatar">
+                👤
+            </div>
 
-            {% block content %}
-            {% endblock %}
+            <div>
 
-        </main>
+                <strong>
+                    {{ user.username }}
+                </strong>
+
+                <br>
+
+                <small>
+                    Workspace Active
+                </small>
+
+                <br>
+
+                <small>
+                    Groq + Gemini
+                </small>
+
+            </div>
+
+        </div>
+
+        <ul>
+
+            <li>
+                <a href="/dashboard/">
+                    🏠 Dashboard
+                </a>
+            </li>
+
+            <li>
+                <a href="/chat/">
+                    💬 Chat
+                </a>
+            </li>
+
+            <li>
+                <a href="{% url 'upload_pdf' %}">
+                    📄 PDF Assistant
+                </a>
+            </li>
+
+            <li>
+                <a href="{% url 'upload_image' %}">
+                    🖼️ Vision AI
+                </a>
+            </li>
+
+            <li>
+                <a href="{% url 'website_summarizer' %}">
+                    🌐 Website AI
+                </a>
+            </li>
+
+            <li>
+                <a href="{% url 'youtube_summarizer' %}">
+                    🎥 YouTube AI
+                </a>
+            </li>
+
+            <li>
+                <a href="{% url 'memories' %}">
+                    🧠 Memory AI
+                </a>
+            </li>
+
+            <li>
+                <a href="/accounts/logout/">
+                    🚪 Logout
+                </a>
+            </li>
+
+        </ul>
+
+    <div class="creator-card">
+
+    <h4>
+        👨‍💻 Creator
+    </h4>
+
+    <p>
+        Abinesh
+    </p>
+
+    <div class="creator-links">
+
+        <a
+            href="YOUR_GITHUB_LINK"
+            target="_blank"
+        >
+            🐙 GitHub
+        </a>
+
+        <a
+            href="YOUR_LINKEDIN_LINK"
+            target="_blank"
+        >
+            💼 LinkedIn
+        </a>
+
+        <a
+            href="mailto:YOUR_EMAIL"
+        >
+            📧 Email
+        </a>
 
     </div>
+    <p>
+    JARVIS AI v1.2.4
+</p>
 
-    <script src="{% static 'js/app.js' %}"></script>
+</div>
+
+    </aside>
+
+    <main class="content">
+
+        {% block content %}
+        {% endblock %}
+
+    </main>
+
+</div>
+
+<script src="{% static 'js/app.js' %}"></script>
+
+<script>
+
+const menuBtn =
+document.getElementById(
+    "menu-btn"
+);
+
+const sidebar =
+document.getElementById(
+    "sidebar"
+);
+
+const closeBtn =
+document.getElementById(
+    "close-sidebar"
+);
+
+if(menuBtn){
+
+    menuBtn.addEventListener(
+        "click",
+        function(){
+
+            sidebar.classList.add(
+                "show"
+            );
+
+        }
+    );
+
+}
+
+if(closeBtn){
+
+    closeBtn.addEventListener(
+        "click",
+        function(){
+
+            sidebar.classList.remove(
+                "show"
+            );
+
+        }
+    );
+
+}
+
+</script>
 
 </body>
 </html>

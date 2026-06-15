@@ -2,7 +2,20 @@
 
 {% block content %}
 
-<h2>Upload Image 🖼️</h2>
+<div class="page-header">
+
+
+<h1>🤖 Vision AI</h1>
+
+<p>
+    Upload images and analyze them using Gemini Vision.
+</p>
+
+
+</div>
+
+<div class="upload-card">
+
 
 <form
     method="POST"
@@ -14,29 +27,55 @@
     {{ form.as_p }}
 
     <button type="submit">
-        Upload
+        🚀 Upload Image
     </button>
 
 </form>
 
-<hr>
 
-<h3>Your Images</h3>
+</div>
+
+<div class="section-title">
+
+
+<h2>🤖 Your Images</h2>
+
+
+</div>
+
+<div class="pdf-grid">
 
 {% for image in images %}
 
-    <p>
 
-       <a href="{% url 'image_detail' image.id %}">
-    {{ image.image.name }}
+<a
+    href="{% url 'image_detail' image.id %}"
+    class="pdf-card"
+>
+
+    <div class="pdf-icon">
+
+        🤖
+
+    </div>
+
+    <div class="pdf-name">
+
+        {{ image.image.name }}
+
+    </div>
+
 </a>
 
-    </p>
 
 {% empty %}
 
-    <p>No images uploaded yet.</p>
+
+<p>No images uploaded yet.</p>
+
 
 {% endfor %}
+
+</div>
 
 {% endblock %}

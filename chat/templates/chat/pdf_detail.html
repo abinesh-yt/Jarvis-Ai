@@ -2,9 +2,18 @@
 
 {% block content %}
 
-<h2>
-    {{ pdf.file.name }}
-</h2>
+<div class="page-header">
+
+
+<h1>📄 PDF Assistant</h1>
+
+<p>{{ pdf.file.name }}</p>
+
+
+</div>
+
+<div class="action-card">
+
 
 <form method="POST">
 
@@ -14,28 +23,18 @@
         type="submit"
         name="summarize"
     >
-        Summarize PDF 🤖
+        🚀 Generate Summary
     </button>
 
 </form>
 
-{% if summary %}
 
-    <hr>
+</div>
 
-    <h3>Summary</h3>
+<div class="action-card">
 
-    <p>
 
-        {{ summary }}
-
-    </p>
-
-{% endif %}
-
-<hr>
-
-<h3>Ask PDF 🤖</h3>
+<h2>❓ Ask PDF</h2>
 
 <form method="POST">
 
@@ -44,7 +43,7 @@
     <input
         type="text"
         name="question"
-        placeholder="Ask about this PDF..."
+        placeholder="Ask anything about this PDF..."
         required
     >
 
@@ -52,31 +51,63 @@
         type="submit"
         name="ask"
     >
-        Ask
+        🤖 Ask AI
     </button>
 
 </form>
 
-{% if answer %}
 
-    <h4>Answer</h4>
+</div>
 
-    <p>
+{% if summary %}
 
-        {{ answer }}
+<div class="result-card">
 
-    </p>
+
+<h2>🤖 Summary</h2>
+
+<div class="result-content">
+
+    {{ summary }}
+
+</div>
+
+
+</div>
 
 {% endif %}
 
-<hr>
+{% if answer %}
 
-<h3>Extracted Text</h3>
+<div class="result-card">
+
+
+<h2>💡 Answer</h2>
+
+<div class="result-content">
+
+    {{ answer }}
+
+</div>
+
+
+</div>
+
+{% endif %}
+
+<div class="result-card">
+
+
+<h2>📚 Extracted Text</h2>
 
 <pre>
 
+
 {{ text }}
 
+
 </pre>
+
+</div>
 
 {% endblock %}
