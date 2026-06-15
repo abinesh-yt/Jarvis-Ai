@@ -274,6 +274,7 @@ def upload_image(request):
     
 @login_required
 def image_detail(request, image_id):
+    
 
     image = ImageFile.objects.get(
         id=image_id,
@@ -281,32 +282,55 @@ def image_detail(request, image_id):
     )
 
     analysis = None
+    question = ""
+    answer = None
 
     if request.method == "POST":
 
         model = genai.GenerativeModel(
-            "gemini-flash-latest"
+            "gemini-2.5-flash"
         )
 
         uploaded_image = PIL.Image.open(
             image.image.path
         )
 
-        print("Image Path:", image.image.path)
-        print("Image Size:", uploaded_image.size)
+        if "analyze" in request.POST:
 
-        response = model.generate_content([
-            "Describe this image in detail.",
-            uploaded_image
-        ])
+            response = model.generate_content([
+                "Describe this image in detail.",
+                uploaded_image
+            ])
 
-        analysis = response.text
+            analysis = response.text
+
+        elif "ask" in request.POST:
+
+            question = request.POST.get(
+                "question",
+                ""
+            )
+
+            response = model.generate_content([
+                f"""
+                Answer the user's question
+                about this image.
+
+                Question:
+                {question}
+                """,
+                uploaded_image
+            ])
+
+            answer = response.text
 
     return render(
-        request,
-        "chat/image_detail.html",
-        {
-            "image": image,
-            "analysis": analysis
-        }
-    )
+    request,
+    "chat/image_detail.html",
+    {
+        "image": image,
+        "analysis": analysis,
+        "question": question,
+        "answer": answer,
+    }
+)

@@ -18,21 +18,46 @@
 
     {% csrf_token %}
 
-    <button type="submit">
+    <button
+        type="submit"
+        name="analyze"
+    >
         Analyze Image 🤖
     </button>
 
 </form>
 
-{% if analysis %}
+<hr>
 
-    <hr>
+<h3>Ask About Image 👀</h3>
 
-    <h3>Analysis</h3>
+<form method="POST">
+
+    {% csrf_token %}
+
+    <input
+        type="text"
+        name="question"
+        placeholder="Ask about this image..."
+        required
+    >
+
+    <button
+        type="submit"
+        name="ask"
+    >
+        Ask
+    </button>
+
+</form>
+
+{% if answer %}
+
+    <h4>Answer</h4>
 
     <p>
 
-        {{ analysis }}
+        {{ answer }}
 
     </p>
 
