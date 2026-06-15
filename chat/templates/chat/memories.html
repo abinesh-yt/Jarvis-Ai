@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>My Memories 🧠</h2>
+
+<form method="POST">
+
+    {% csrf_token %}
+
+    {{ form.as_p }}
+
+    <button type="submit">
+        Save Memory
+    </button>
+
+</form>
+
+<hr>
+
+{% for memory in memories %}
+
+    <p>
+        🧠 {{ memory.content }}
+    </p>
+
+{% empty %}
+
+    <p>No memories saved yet.</p>
+
+{% endfor %}
+
+{% endblock %}

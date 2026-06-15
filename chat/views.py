@@ -1,17 +1,21 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from .models import ChatSession
-from .models import ChatSession, Message
+from .models import (
+    ChatSession,
+    Message,
+    PDFFile,
+    ImageFile,
+    Memory,
+)
 from .ai import get_ai_response
-from .models import PDFFile
 from .forms import PDFUploadForm
 from pypdf import PdfReader
 from groq import Groq
 import os
-from .models import ImageFile
 from .forms import ImageUploadForm
 import google.generativeai as genai
 import PIL.Image
+from .forms import MemoryForm
 
 
 
@@ -58,13 +62,35 @@ def chat_detail(request, chat_id):
                 role="user",
                 content=content
             )
-            
+
             if chat.title == "New Chat":
 
                 chat.title = content[:40]
                 chat.save()
 
-            ai_response = get_ai_response(content)
+            # Load user memories
+            memories = Memory.objects.filter(
+                user=request.user
+            )
+
+            memory_text = "\n".join(
+                [memory.content for memory in memories]
+            )
+
+            # Create memory-aware prompt
+            prompt = f"""
+            User Memories:
+
+            {memory_text}
+
+            User Message:
+
+            {content}
+
+            Use the memories when relevant.
+            """
+
+            ai_response = get_ai_response(prompt)
 
             Message.objects.create(
                 chat=chat,
@@ -76,14 +102,14 @@ def chat_detail(request, chat_id):
 
     messages = Message.objects.filter(
         chat=chat
-    ).order_by('created_at')
+    ).order_by("created_at")
 
     return render(
         request,
-        'chat/chat_detail.html',
+        "chat/chat_detail.html",
         {
-            'chat': chat,
-            'messages': messages
+            "chat": chat,
+            "messages": messages
         }
     )
     
@@ -226,12 +252,13 @@ def pdf_detail(request, pdf_id):
     )
     
     
+    
 
     
 client = Groq(
     api_key=os.getenv("GROQ_API_KEY")
 )
-print("Gemini Key:", os.getenv("GEMINI_API_KEY")[:10])
+
 genai.configure(
     api_key=os.getenv("GEMINI_API_KEY")
 )
@@ -334,3 +361,38 @@ def image_detail(request, image_id):
         "answer": answer,
     }
 )
+    
+    
+@login_required
+def memories(request):
+
+    if request.method == "POST":
+
+        form = MemoryForm(request.POST)
+
+        if form.is_valid():
+
+            memory = form.save(commit=False)
+
+            memory.user = request.user
+
+            memory.save()
+
+            return redirect("memories")
+
+    else:
+
+        form = MemoryForm()
+
+    memories = Memory.objects.filter(
+        user=request.user
+    ).order_by("-created_at")
+
+    return render(
+        request,
+        "chat/memories.html",
+        {
+            "form": form,
+            "memories": memories
+        }
+    )

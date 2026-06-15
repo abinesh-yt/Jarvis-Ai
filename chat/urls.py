@@ -35,5 +35,11 @@ urlpatterns = [
     name="image_detail"
 ),
     
+    path(
+    "memories/",
+    views.memories,
+    name="memories"
+),
+    
 ]
 

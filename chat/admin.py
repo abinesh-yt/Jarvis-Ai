@@ -12,3 +12,7 @@ admin.site.register(PDFFile)
 from .models import ImageFile
 
 admin.site.register(ImageFile)
+
+from .models import Memory
+
+admin.site.register(Memory)
