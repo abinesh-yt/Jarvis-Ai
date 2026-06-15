@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Website Summarizer 🌐</h2>
+
+<form method="POST">
+
+    {% csrf_token %}
+
+    {{ form.as_p }}
+
+    <button type="submit">
+        Summarize Website
+    </button>
+
+</form>
+
+{% if summary %}
+
+<hr>
+
+<h3>Summary</h3>
+
+<p>
+
+{{ summary }}
+
+</p>
+
+{% endif %}
+
+{% endblock %}

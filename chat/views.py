@@ -16,6 +16,9 @@ from .forms import ImageUploadForm
 import google.generativeai as genai
 import PIL.Image
 from .forms import MemoryForm
+import requests
+from bs4 import BeautifulSoup
+from .forms import WebsiteForm
 
 
 
@@ -454,5 +457,64 @@ def memories(request):
         {
             "form": form,
             "memories": memories
+        }
+    )
+    
+    
+@login_required
+def website_summarizer(request):
+
+    summary = None
+
+    if request.method == "POST":
+
+        form = WebsiteForm(request.POST)
+
+        if form.is_valid():
+
+            url = form.cleaned_data["url"]
+
+            response = requests.get(url)
+
+            soup = BeautifulSoup(
+                response.text,
+                "html.parser"
+            )
+
+            text = soup.get_text()
+
+            prompt = f"""
+            Summarize this website:
+
+            {text[:8000]}
+            """
+
+            completion = client.chat.completions.create(
+                model="llama-3.3-70b-versatile",
+                messages=[
+                    {
+                        "role": "user",
+                        "content": prompt
+                    }
+                ]
+            )
+
+            summary = (
+                completion
+                .choices[0]
+                .message
+                .content
+            )
+
+    else:
+
+        form = WebsiteForm()
+
+    return render(
+        request,
+        "chat/website.html",
+        {
+            "form": form,
+            "summary": summary
         }
     )

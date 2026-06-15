@@ -3,6 +3,7 @@ from .models import PDFFile
 from .models import ImageFile
 from .models import Memory
 
+
 class PDFUploadForm(forms.ModelForm):
 
     class Meta:
@@ -20,3 +21,9 @@ class MemoryForm(forms.ModelForm):
     class Meta:
         model = Memory
         fields = ["content"]
+        
+class WebsiteForm(forms.Form):
+
+    url = forms.URLField(
+        label="Website URL"
+    )

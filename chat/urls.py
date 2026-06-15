@@ -40,6 +40,11 @@ urlpatterns = [
     views.memories,
     name="memories"
 ),
+    path(
+    "website/",
+    views.website_summarizer,
+    name="website_summarizer"
+),
     
 ]
 
