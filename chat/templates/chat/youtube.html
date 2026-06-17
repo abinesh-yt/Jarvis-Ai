@@ -4,44 +4,170 @@
 
 <div class="page-header">
 
-    <h1>🎥 YouTube AI</h1>
 
-    <p>
-        Summarize YouTube videos instantly using JARVIS AI.
-    </p>
+<h1>🎥 YouTube AI Assistant</h1>
+
+<p>
+    Ask questions about any YouTube video,
+    generate summaries, notes, quizzes and more.
+</p>
+
 
 </div>
 
 <div class="upload-card">
 
-    <form method="POST">
 
-        {% csrf_token %}
+<form method="POST">
 
-        {{ form.as_p }}
+    {% csrf_token %}
 
-        <button type="submit">
-            🚀 Summarize Video
-        </button>
+    {{ form.as_p }}
 
-    </form>
+    <label>
+        Ask About This Video
+    </label>
+
+    <textarea
+    id="youtube-question"
+        name="question"
+        placeholder="Examples:
+
+
+Summarize this video
+Give study notes
+Create quiz questions
+Explain simply"
+rows="5"
+></textarea>
+
+
+    <br><br>
+
+    <button type="submit">
+
+        🚀 Ask JARVIS
+
+    </button>
+
+</form>
+
 
 </div>
+
+<div class="dashboard-grid">
+
+
+<div
+    class="dashboard-card yt-prompt"
+    data-prompt="Summarize this video"
+>
+    📄 Summarize Video
+</div>
+
+<div
+    class="dashboard-card yt-prompt"
+    data-prompt="Explain this video simply"
+>
+    🧠 Explain Simply
+</div>
+
+<div
+    class="dashboard-card yt-prompt"
+    data-prompt="What are the key points?"
+>
+    🎯 Key Points
+</div>
+
+<div
+    class="dashboard-card yt-prompt"
+    data-prompt="Create quiz questions from this video"
+>
+    ❓ Create Quiz
+</div>
+
+
+</div>
+
+{% if video_info %}
+
+<div class="result-card">
+
+
+<h2>
+    🎥 Video Loaded
+</h2>
+
+<img
+    src="{{ video_info.thumbnail }}"
+    alt="Thumbnail"
+    class="vision-preview"
+>
+
+<br>
+
+<h3>
+    {{ video_info.title }}
+</h3>
+
+<p>
+    👤 {{ video_info.channel }}
+</p>
+
+
+</div>
+
+{% endif %}
+
+
 
 {% if summary %}
 
 <div class="result-card">
 
-    <h2>🎥 Video Summary</h2>
 
-    <div class="result-content">
+<h2>
+    🤖 JARVIS Response
+</h2>
 
-        {{ summary }}
+<div class="result-content">
 
-    </div>
+    {{ summary }}
+
+</div>
+
 
 </div>
 
 {% endif %}
+
+<script>
+
+const promptCards =
+document.querySelectorAll(".yt-prompt");
+
+const questionBox =
+document.getElementById(
+    "youtube-question"
+);
+
+promptCards.forEach(card => {
+
+    card.addEventListener(
+        "click",
+        () => {
+
+            questionBox.value =
+                card.dataset.prompt;
+
+            questionBox.focus();
+
+        }
+    );
+
+});
+
+</script>
+
 
 {% endblock %}

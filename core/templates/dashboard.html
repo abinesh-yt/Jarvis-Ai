@@ -5,9 +5,7 @@
 <div class="page-header">
 
 
-<div class="card-badge">
-    🚀 AI Workspace
-</div>
+
 
 <h1>
     Welcome Back, {{ user.username }} 👋
@@ -17,6 +15,41 @@
     Access all your AI tools, memories, chats, documents and insights from one place.
 </p>
 
+
+</div>
+<div class="hero-card">
+
+    <div>
+
+        <h1>
+            🤖 JARVIS AI
+        </h1>
+
+        <p>
+            Your personal AI workspace 
+        </p>
+
+        <p>
+            Chat • Documents • Vision • Memory • Web Intelligence
+        </p>
+
+    </div>
+
+    <div class="hero-buttons">
+
+        <a href="/chat/" class="hero-btn">
+
+            💬 New Chat
+
+        </a>
+
+        <a href="{% url 'upload_pdf' %}" class="hero-btn">
+
+            📄 Upload PDF
+
+        </a>
+
+    </div>
 
 </div>
 
@@ -58,7 +91,9 @@
 
 </div>
 
-<div class="dashboard-section">
+<div class="dashboard-row">
+
+    <div class="dashboard-section">
 
 
 <h2>⚡ Recent Activity</h2>
@@ -91,7 +126,7 @@
 
 </div>
 
-<div class="dashboard-section">
+    <div class="dashboard-section">
 
 
 <h2>📄 Recent PDFs</h2>
@@ -120,6 +155,12 @@
 
 
 </div>
+
+</div>
+
+
+
+
 
 <div class="dashboard-section">
 

@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="page-header">
+
+
+<h1>
+    👤 Profile
+</h1>
+
+<p>
+    Your JARVIS AI account overview.
+</p>
+
+
+</div>
+
+<div class="user-card">
+
+
+<div class="user-avatar">
+    👤
+</div>
+
+<div>
+
+    <h2>
+        {{ user.username }}
+    </h2>
+
+
+
+    <p>
+        {{ user.email }}
+    </p>
+
+    <p>
+        Joined:
+        {{ user.date_joined|date:"F d, Y" }}
+    </p>
+
+</div>
+
+
+</div>
+
+<div class="stats-grid">
+
+
+<div class="stat-card">
+
+    <h2>{{ chat_count }}</h2>
+
+    <p>💬 Chats</p>
+
+</div>
+
+<div class="stat-card">
+
+    <h2>{{ pdf_count }}</h2>
+
+    <p>📄 PDFs</p>
+
+</div>
+
+<div class="stat-card">
+
+    <h2>{{ image_count }}</h2>
+
+    <p>🖼️ Images</p>
+
+</div>
+
+<div class="stat-card">
+
+    <h2>{{ memory_count }}</h2>
+
+    <p>🧠 Memories</p>
+
+</div>
+
+
+</div>
+
+<div class="result-card">
+
+
+<div class="result-card">
+
+
+<h2>
+    🚀 Workspace Information
+</h2>
+
+<div class="profile-info">
+
+    <p>✅ Account Active</p>
+
+    <p>🤖 AI Engine: Groq + Gemini</p>
+
+    <p>
+        📅 Joined:
+        {{ user.date_joined|date:"F d, Y" }}
+    </p>
+
+    <p>
+        💬 Total Chats:
+        {{ chat_count }}
+    </p>
+
+    <p>
+        📄 PDFs Uploaded:
+        {{ pdf_count }}
+    </p>
+
+    <p>
+        🖼️ Images Uploaded:
+        {{ image_count }}
+    </p>
+
+    <p>
+        🧠 Memories Saved:
+        {{ memory_count }}
+    </p>
+
+    <p>
+        🚀 Version:
+        JARVIS AI v1.2.4
+    </p>
+
+</div>
+
+
+</div>
+
+
+
+</div>
+
+{% endblock %}

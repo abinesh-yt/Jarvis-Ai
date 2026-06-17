@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="page-header">
+
+
+<h1>
+    ✏️ Rename Chat
+</h1>
+
+<p>
+    Give your conversation a better title.
+</p>
+
+
+</div>
+
+<div class="upload-card">
+
+<form method="POST">
+
+    {% csrf_token %}
+
+    <input
+    type="text"
+    name="title"
+    value="{{ chat.title }}"
+    maxlength="100"
+    required
+>
+
+    <br><br>
+
+    <button type="submit">
+
+        💾 Save Title
+
+    </button>
+
+</form>
+
+
+</div>
+
+{% endblock %}

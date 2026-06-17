@@ -1,27 +1,153 @@
 <!DOCTYPE html>
 <html>
+
 <head>
+
     <title>JARVIS AI</title>
+
+    <link rel="stylesheet"
+    href="/static/css/auth.css">
+
 </head>
+
 <body>
 
-<h1>JARVIS AI</h1>
+<div class="hero">
 
-{% if user.is_authenticated %}
+    <div class="hero-content">
 
-    <h2>Welcome {{ user.username }}</h2>
+        <div class="badge">
+            ✨ Multi-Tool Intelligence Suite
+        </div>
 
-    <a href="/accounts/logout/">Logout</a>
+        <h1>
+            🤖 JARVIS AI
+        </h1>
 
-{% else %}
+        <p class="hero-text">
+            Your Personal AI Workspace for chatting,
+            document analysis, image understanding,
+            website summarization and intelligent memory.
+        </p>
 
-    <h2>Not Logged In</h2>
+        <div class="hero-stats">
 
-    <a href="/accounts/login/">Login</a>
-    <br>
-    <a href="/accounts/register/">Register</a>
+    <span>💬 AI Chat</span>
 
-{% endif %}
+    <span>📄 PDF AI</span>
+
+    <span>🖼️ Vision AI</span>
+
+    <span>🧠 Memory AI</span>
+
+</div>
+
+        <div class="hero-buttons">
+
+            <a href="/accounts/login/">
+                <button>
+                    🔑 Login
+                </button>
+            </a>
+
+            <a href="/accounts/register/">
+                <button class="secondary-btn">
+                    🚀 Create Account
+                </button>
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div class="features">
+
+    <div class="feature-card">
+
+        <h2>💬 AI Chat</h2>
+
+        <p>
+            Talk naturally with JARVIS using
+            advanced AI models.
+        </p>
+
+    </div>
+
+    <div class="feature-card">
+
+        <h2>📄 PDF Assistant</h2>
+
+        <p>
+            Upload PDFs, summarize content
+            and ask questions instantly.
+        </p>
+
+    </div>
+
+    <div class="feature-card">
+
+        <h2>🖼️ Vision AI</h2>
+
+        <p>
+            Upload images and ask AI
+            what it sees.
+        </p>
+
+    </div>
+
+    <div class="feature-card">
+
+        <h2>🌐 Website AI</h2>
+
+        <p>
+            Summarize websites instantly
+            using AI.
+        </p>
+
+    </div>
+
+    <div class="feature-card">
+
+        <h2>🎥 YouTube AI</h2>
+
+        <p>
+            Understand videos without
+            watching the entire content.
+        </p>
+
+    </div>
+
+    <div class="feature-card">
+
+        <h2>🧠 Memory AI</h2>
+
+        <p>
+            Save and recall important
+            information anytime.
+        </p>
+
+    </div>
+
+</div>
+
+
+
+
+
+<footer class="landing-footer">
+
+    <p>
+        Created by Abinesh 🚀
+    </p>
+
+    <p>
+        JARVIS AI v1.2.4
+    </p>
+
+</footer>
 
 </body>
+
 </html>

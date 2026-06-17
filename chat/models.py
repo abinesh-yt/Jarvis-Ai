@@ -90,3 +90,35 @@ class Memory(models.Model):
     def __str__(self):
 
         return self.content[:50]
+    
+    
+class YouTubeVideo(models.Model):
+
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE
+    )
+
+    title = models.CharField(
+        max_length=500
+    )
+
+    url = models.URLField()
+
+    channel = models.CharField(
+        max_length=255
+    )
+
+    thumbnail = models.URLField()
+
+    transcript = models.TextField()
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    def __str__(self):
+
+        return self.title
+

@@ -23,7 +23,7 @@ def register(request):
                 password=password
             )
 
-            return redirect('/accounts/register/')
+            return redirect('/accounts/login/')
 
     return render(
         request,
@@ -49,7 +49,7 @@ def login_view(request):
 
         if user is not None:
             login(request, user)
-            return redirect('/')
+            return redirect('/dashboard/')
 
         else:
             error = "Invalid username or password"

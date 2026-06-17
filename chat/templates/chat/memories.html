@@ -4,33 +4,101 @@
 
 <div class="page-header">
 
-    <h1>🧠 Memory AI</h1>
+
+<h1>🧠 Memory Vault</h1>
+
+<p>
+    Store important information and let JARVIS remember it forever.
+</p>
+
+
+</div>
+
+<div class="stats-grid">
+
+
+<div class="stat-card">
+
+    <h2>
+        {{ memories|length }}
+    </h2>
 
     <p>
-        Save important information for JARVIS to remember.
+        Total Memories
     </p>
 
 </div>
 
-<div class="upload-card">
-
-    <form method="POST">
-
-        {% csrf_token %}
-
-        {{ form.as_p }}
-
-        <button type="submit">
-            🧠 Save Memory
-        </button>
-
-    </form>
 
 </div>
 
+
+{% if insight %}
+
+<div class="result-card">
+
+
+<h2>
+    🧠 Memory Insights
+</h2>
+
+<div class="result-content">
+
+    {{ insight }}
+
+</div>
+
+
+</div>
+
+<br>
+
+{% endif %}
+
+
+<div class="upload-card">
+
+
+<form method="POST">
+
+    {% csrf_token %}
+
+    {{ form.as_p }}
+
+    <button type="submit">
+
+        🧠 Save Memory
+
+    </button>
+
+</form>
+
+
+</div>
+
+<br>
+
+<div class="search-container">
+
+
+<input
+    type="text"
+    id="memory-search"
+    placeholder="🔍 Search memories..."
+>
+
+
+</div>
+
+<br>
+
 <div class="section-title">
 
-    <h2>🧠 Your Memories</h2>
+
+<h2>
+    🧠 Your Memories
+</h2>
+
 
 </div>
 
@@ -38,36 +106,104 @@
 
 {% for memory in memories %}
 
-    <div class="memory-card">
 
-        <div class="memory-icon">
+<div
+    class="memory-card memory-item"
+    data-memory="{{ memory.content|lower }}"
+>
 
-            🧠
+    <div class="memory-icon">
 
-        </div>
-
-        <div class="memory-content">
-
-            {{ memory.content }}
-
-        </div>
+        🧠
 
     </div>
+
+    <div class="memory-content">
+
+        {{ memory.content }}
+
+    </div>
+
+    <br>
+
+    <a
+        href="{% url 'delete_memory' memory.id %}"
+        class="delete-btn"
+        onclick="return confirm('Delete this memory?')"
+    >
+        🗑️
+    </a>
+
+</div>
+
 
 {% empty %}
 
-    <div class="empty-card">
 
-        <h3>No Memories Yet</h3>
+<div class="empty-card">
 
-        <p>
-            Save your first memory and let JARVIS remember it.
-        </p>
+    <h3>
+        No Memories Yet
+    </h3>
 
-    </div>
+    <p>
+        Save your first memory and let JARVIS remember it.
+    </p>
+
+</div>
+
 
 {% endfor %}
 
 </div>
+
+<script>
+
+const memorySearch =
+document.getElementById(
+    "memory-search"
+);
+
+const memoryItems =
+document.querySelectorAll(
+    ".memory-item"
+);
+
+if(memorySearch){
+
+    memorySearch.addEventListener(
+        "keyup",
+        function(){
+
+            const value =
+                this.value.toLowerCase();
+
+            memoryItems.forEach(item => {
+
+                const text =
+                    item.dataset.memory;
+
+                if(
+                    text.includes(value)
+                ){
+
+                    item.style.display =
+                        "block";
+
+                }else{
+
+                    item.style.display =
+                        "none";
+
+                }
+
+            });
+
+        }
+    );
+
+}
+
+</script>
 
 {% endblock %}

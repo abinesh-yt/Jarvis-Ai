@@ -5,57 +5,135 @@
 
 <div class="chat-header">
 
-    <h1>🤖 {{ chat.title }}</h1>
 
-    <p>
-        Powered by JARVIS AI
-    </p>
+<h1>🤖 {{ chat.title }}</h1>
+
+<p>
+    Powered by JARVIS AI
+</p>
+
 
 </div>
 
 <div class="chat-box" id="chat-box">
 
-    {% for message in messages %}
 
-        <div class="message-wrapper {{ message.role }}">
+{% if not messages %}
 
-            <div class="message-bubble">
+<div class="empty-chat">
 
-    {{ message.content|markdownify }}
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+    <div class="orb orb3"></div>
 
-    {% if message.role == "assistant" %}
-        <button
-            class="speak-btn"
-            data-text="{{ message.content }}"
+    <div class="jarvis-glow"></div>
+
+    <div class="jarvis-icon">
+        🤖
+    </div>
+
+    <h1>JARVIS AI</h1>
+
+    <p>
+        Your intelligent workspace for chatting,
+        documents, images, websites and memory.
+    </p>
+
+    <div class="suggestion-grid">
+
+        <div
+            class="suggestion-card"
+            onclick="fillPrompt('Explain Django professionally')"
         >
-            🔊
-        </button>
-    {% endif %}
+            💬 Explain Django professionally
+        </div>
+
+        <div
+            class="suggestion-card"
+            onclick="fillPrompt('Summarize my PDF')"
+        >
+            📄 Summarize my PDF
+        </div>
+
+        <div
+            class="suggestion-card"
+            onclick="fillPrompt('Analyze a website')"
+        >
+            🌐 Analyze a website
+        </div>
+
+        <div
+            class="suggestion-card"
+            onclick="fillPrompt('Summarize a YouTube video')"
+        >
+            🎥 Summarize a YouTube video
+        </div>
+
+        <div
+            class="suggestion-card"
+            onclick="fillPrompt('Save a memory for me')"
+        >
+            🧠 Save a memory for me
+        </div>
+
+        <div
+            class="suggestion-card"
+            onclick="fillPrompt('Give me startup ideas')"
+        >
+            🚀 Give me startup ideas
+        </div>
+
+    </div>
 
 </div>
+
+{% endif %}
+
+{% for message in messages %}
+
+    <div class="message-wrapper {{ message.role }}">
+
+        <div class="message-bubble">
+
+            {{ message.content|markdownify }}
+
+            {% if message.role == "assistant" %}
+
+            <button
+                class="speak-btn"
+                data-text="{{ message.content }}"
+            >
+                🔊
+            </button>
+
+            {% endif %}
 
         </div>
 
-    {% empty %}
+    </div>
 
-        <p>Start a conversation with JARVIS 🤖</p>
+{% endfor %}
 
-    {% endfor %}
 
 </div>
 
-<form method="POST" class="chat-form" id="chat-form">
+<form
+    method="POST"
+    class="chat-form"
+    id="chat-form"
+>
 
-    {% csrf_token %}
 
-    <textarea
+{% csrf_token %}
+
+<textarea
     name="message"
     id="message-input"
     placeholder="Message JARVIS..."
     required
 ></textarea>
 
-    <button
+<button
     type="button"
     id="mic-btn"
 >
@@ -66,9 +144,13 @@
     Send
 </button>
 
+
 </form>
 
-<div id="thinking-indicator" style="display:none; margin-top:10px;">
+<div
+    id="thinking-indicator"
+    style="display:none; margin-top:10px;"
+>
     🤖 JARVIS is thinking...
 </div>
 

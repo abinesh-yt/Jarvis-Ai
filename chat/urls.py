@@ -1,8 +1,12 @@
 from django.urls import path
 from .views import (
     chat_home,
+    chat_detail,
     new_chat,
-    chat_detail
+    delete_chat,
+    rename_chat,
+    profile,
+    delete_memory
 )
 from . import views
 
@@ -55,6 +59,24 @@ urlpatterns = [
     "delete/<int:chat_id>/",
     views.delete_chat,
     name="delete_chat"
+),
+    
+    path(
+    "rename/<int:chat_id>/",
+    rename_chat,
+    name="rename_chat"
+),
+    
+    path(
+    "profile/",
+    profile,
+    name="profile"
+),
+    
+    path(
+    "memory/delete/<int:memory_id>/",
+    delete_memory,
+    name="delete_memory"
 ),
     
 ]

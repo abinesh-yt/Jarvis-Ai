@@ -237,3 +237,21 @@ button.addEventListener(
 
 
 });
+
+
+function fillPrompt(text){
+
+    const input =
+    document.getElementById(
+        "message-input"
+    );
+
+    if(input){
+
+        input.value = text;
+
+        input.focus();
+
+    }
+
+}

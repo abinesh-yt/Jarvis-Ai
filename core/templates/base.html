@@ -63,7 +63,7 @@
                 <br>
 
                 <small>
-                    Groq + Gemini
+                    Personal AI Assistant
                 </small>
 
             </div>
@@ -115,51 +115,65 @@
             </li>
 
             <li>
+                <a href="{% url 'profile' %}">
+                    👤 Profile
+                </a>
+            </li>
+
+            <li>
                 <a href="/accounts/logout/">
                     🚪 Logout
                 </a>
             </li>
 
         </ul>
+    
 
-    <div class="creator-card">
+    <div class="creator-section">
 
-    <h4>
+    <div class="creator-title">
         👨‍💻 Creator
-    </h4>
+    </div>
 
-    <p>
+    <div class="creator-name">
         Abinesh
-    </p>
+    </div>
+
+    <div class="creator-role">
+        Founder & Developer
+    </div>
 
     <div class="creator-links">
 
-        <a
-            href="YOUR_GITHUB_LINK"
-            target="_blank"
-        >
-            🐙 GitHub
+        <a href="#" target="_blank">
+            🌐 Portfolio
         </a>
 
-        <a
-            href="YOUR_LINKEDIN_LINK"
-            target="_blank"
-        >
+        <a href="#" target="https://github.com/abinesh-yt">
+            💻 GitHub
+        </a>
+
+        <a href="#" target="https://www.linkedin.com/in/abinesh-dev01/">
             💼 LinkedIn
         </a>
 
-        <a
-            href="mailto:YOUR_EMAIL"
-        >
-            📧 Email
+        <a href="mailto:neshabinesh@gmail.com">
+            📧 Contact
         </a>
 
     </div>
-    <p>
-    JARVIS AI v1.2.4
-</p>
+
+    <div class="creator-divider"></div>
+
+    <div class="creator-footer">
+        JARVIS AI v1.2.4
+    </div>
 
 </div>
+
+
+
+    
 
     </aside>
 
@@ -174,54 +188,7 @@
 
 <script src="{% static 'js/app.js' %}"></script>
 
-<script>
 
-const menuBtn =
-document.getElementById(
-    "menu-btn"
-);
-
-const sidebar =
-document.getElementById(
-    "sidebar"
-);
-
-const closeBtn =
-document.getElementById(
-    "close-sidebar"
-);
-
-if(menuBtn){
-
-    menuBtn.addEventListener(
-        "click",
-        function(){
-
-            sidebar.classList.add(
-                "show"
-            );
-
-        }
-    );
-
-}
-
-if(closeBtn){
-
-    closeBtn.addEventListener(
-        "click",
-        function(){
-
-            sidebar.classList.remove(
-                "show"
-            );
-
-        }
-    );
-
-}
-
-</script>
 
 </body>
 </html>

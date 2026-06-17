@@ -4,49 +4,77 @@
 
 <div class="page-header">
 
-    <h1>💬 JARVIS Chats</h1>
 
-    <p>
-        Continue previous conversations or start a new one.
-    </p>
+<h1>💬 JARVIS Chats</h1>
+
+<p>
+    Continue previous conversations or start a new one.
+</p>
+
 
 </div>
 
 <a
-    href="/chat/new/"
-    class="new-chat-btn"
+href="/chat/new/"
+class="new-chat-btn"
+
 >
-    ➕ New Chat
+
+
+➕ New Chat
+
+
 </a>
+
+<div class="search-container">
+
+
+<input
+    type="text"
+    id="chat-search"
+    placeholder="🔍 Search chats..."
+>
+
+
+</div>
 
 <div class="chat-grid">
 
 {% for chat in chats %}
 
-<div class="chat-card">
+<div class="chat-wrapper">
 
-    <a
-        href="/chat/{{ chat.id }}/"
-        class="chat-link"
-    >
 
-        <div class="chat-icon">
-            💬
-        </div>
+<a
+    href="/chat/{{ chat.id }}/"
+    class="chat-card"
+    data-title="{{ chat.title|lower }}"
+>
 
-        <div class="chat-title">
-            {{ chat.title }}
-        </div>
+    <div class="chat-icon">
+        💬
+    </div>
 
-    </a>
+    <div class="chat-title">
+        {{ chat.title }}
+    </div>
 
-    <a
-        href="{% url 'delete_chat' chat.id %}"
-        class="delete-btn"
-        onclick="return confirm('Delete this chat?')"
-    >
-        🗑️
-    </a>
+</a>
+<a
+    href="{% url 'rename_chat' chat.id %}"
+    class="rename-btn"
+>
+    ✏️
+</a>
+
+<a
+    href="{% url 'delete_chat' chat.id %}"
+    class="delete-btn"
+    onclick="return confirm('Delete this chat?')"
+>
+    🗑️
+</a>
+
 
 </div>
 
@@ -54,12 +82,58 @@
 
 <div class="empty-card">
 
-    No chats yet 🤖
+
+No chats yet 🤖
+
 
 </div>
 
 {% endfor %}
 
 </div>
+
+<script>
+
+const searchInput =
+    document.getElementById("chat-search");
+
+const chatCards =
+    document.querySelectorAll(".chat-card");
+
+if(searchInput){
+
+    searchInput.addEventListener(
+        "keyup",
+        function(){
+
+            const value =
+                this.value.toLowerCase();
+
+            chatCards.forEach(card => {
+
+                const title =
+                    (card.dataset.title || "")
+                    .toLowerCase();
+
+                if(title.includes(value)){
+
+                    card.parentElement.style.display =
+                        "block";
+
+                }else{
+
+                    card.parentElement.style.display =
+                        "none";
+
+                }
+
+            });
+
+        }
+    );
+
+}
+
+</script>
 
 {% endblock %}
