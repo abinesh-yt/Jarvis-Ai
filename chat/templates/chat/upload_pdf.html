@@ -4,66 +4,101 @@
 
 <div class="page-header">
 
-    <h1>📄 PDF Assistant</h1>
 
-    <p>
-        Upload PDFs, generate summaries and ask questions.
-    </p>
+<h1>📄 PDF Assistant</h1>
+
+<p>
+    Upload PDFs, generate summaries and ask questions.
+</p>
+
+<br>
+
+<a
+    href="{% url 'pdf_library' %}"
+    class="new-chat-btn"
+>
+    📚 View Full Library
+</a>
+
 
 </div>
 
 <div class="upload-card">
 
-    <form
-        method="POST"
-        enctype="multipart/form-data"
-    >
 
-        {% csrf_token %}
+<form
+    method="POST"
+    enctype="multipart/form-data"
+>
 
-        {{ form.as_p }}
+    {% csrf_token %}
 
-        <button type="submit">
-            🚀 Upload PDF
-        </button>
+    {{ form.as_p }}
 
-    </form>
+    <button type="submit">
+        🚀 Upload PDF
+    </button>
+
+</form>
+
 
 </div>
 
+{% if pdfs %}
+
 <div class="section-title">
 
-    <h2>📚 Your PDFs</h2>
+
+<h2>📄 Recent PDFs</h2>
+
 
 </div>
 
 <div class="pdf-grid">
 
-{% for pdf in pdfs %}
+{% for pdf in pdfs|slice:":3" %}
 
-    <a
-        href="{% url 'pdf_detail' pdf.id %}"
-        class="pdf-card"
-    >
 
-        <div class="pdf-icon">
-            📄
-        </div>
+<a
+    href="{% url 'pdf_detail' pdf.id %}"
+    class="pdf-card"
+>
 
-        <div class="pdf-name">
+    <div class="pdf-icon">
+        📄
+    </div>
 
-            {{ pdf.file.name }}
+    <div class="pdf-name">
 
-        </div>
+        {{ pdf.file.name }}
 
-    </a>
+    </div>
 
-{% empty %}
+  
 
-    <p>No PDFs uploaded yet.</p>
+</a>
+
 
 {% endfor %}
 
 </div>
+
+{% else %}
+
+<div class="empty-card">
+
+
+<h3>
+    No PDFs Yet
+</h3>
+
+<p>
+    Upload your first PDF and let JARVIS analyze it.
+</p>
+
+
+</div>
+
+{% endif %}
 
 {% endblock %}

@@ -7,13 +7,74 @@
 
 <h1>📄 PDF Assistant</h1>
 
-<p>{{ pdf.file.name }}</p>
+<p>
+    {{ pdf.file.name }}
+</p>
+
+<br>
+
+<a
+    href="{% url 'pdf_library' %}"
+    class="new-chat-btn"
+>
+    📚 PDF Library
+</a>
 
 
 </div>
 
+<div class="dashboard-grid">
+
+
+<div class="dashboard-card">
+    📄 PDF Loaded
+</div>
+
+<div class="dashboard-card">
+    🤖 AI Ready
+</div>
+
+
+</div>
+
+{% if pdf_messages %}
+
+<div class="result-card">
+
+
+<h2>
+    💬 PDF Conversation
+</h2>
+
+{% for msg in pdf_messages %}
+
+<div
+    class="message-wrapper {{ msg.role }}"
+    style="margin-bottom:15px;"
+>
+
+    <div class="message-bubble">
+
+        {{ msg.content }}
+
+    </div>
+
+</div>
+
+{% endfor %}
+
+
+</div>
+
+{% endif %}
+
+
 <div class="action-card">
 
+
+<h2>
+    🚀 Generate Summary
+</h2>
 
 <form method="POST">
 
@@ -23,7 +84,7 @@
         type="submit"
         name="summarize"
     >
-        🚀 Generate Summary
+        Generate Summary
     </button>
 
 </form>
@@ -34,7 +95,9 @@
 <div class="action-card">
 
 
-<h2>❓ Ask PDF</h2>
+<h2>
+    ❓ Ask About PDF
+</h2>
 
 <form method="POST">
 
@@ -51,7 +114,7 @@
         type="submit"
         name="ask"
     >
-        🤖 Ask AI
+        🤖 Ask JARVIS
     </button>
 
 </form>
@@ -64,7 +127,9 @@
 <div class="result-card">
 
 
-<h2>🤖 Summary</h2>
+<h2>
+    🤖 PDF Summary
+</h2>
 
 <div class="result-content">
 
@@ -82,7 +147,9 @@
 <div class="result-card">
 
 
-<h2>💡 Answer</h2>
+<h2>
+    💡 JARVIS Answer
+</h2>
 
 <div class="result-content">
 
@@ -95,10 +162,14 @@
 
 {% endif %}
 
-<div class="result-card">
+<details class="result-card">
 
 
-<h2>📚 Extracted Text</h2>
+<summary>
+    📚 View Extracted Text
+</summary>
+
+<br>
 
 <pre>
 
@@ -108,6 +179,7 @@
 
 </pre>
 
-</div>
+
+</details>
 
 {% endblock %}

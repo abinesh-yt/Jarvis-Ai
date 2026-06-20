@@ -4,6 +4,7 @@ from .views import (
     chat_detail,
     new_chat,
     delete_chat,
+    youtube_history,
     rename_chat,
     profile,
     delete_memory
@@ -77,6 +78,24 @@ urlpatterns = [
     "memory/delete/<int:memory_id>/",
     delete_memory,
     name="delete_memory"
+),
+    
+    path(
+    "youtube/history/",
+    views.youtube_history,
+    name="youtube_history"
+),
+    
+    path(
+    "youtube/video/<int:video_id>/",
+    views.youtube_video_detail,
+    name="youtube_video_detail"
+),
+    
+    path(
+    "pdf/library/",
+    views.pdf_library,
+    name="pdf_library"
 ),
     
 ]

@@ -4,9 +4,11 @@ from .models import (
     ChatSession,
     Message,
     PDFFile,
+    PDFMessage,
     ImageFile,
     Memory,
-    YouTubeVideo
+    YouTubeVideo,
+    VideoMessage
 )
 from .ai import get_ai_response
 from .forms import PDFUploadForm
@@ -260,7 +262,6 @@ def upload_pdf(request):
 @login_required
 def pdf_detail(request, pdf_id):
 
-
     pdf = PDFFile.objects.get(
         id=pdf_id,
         user=request.user
@@ -284,6 +285,10 @@ def pdf_detail(request, pdf_id):
     question = ""
     answer = None
 
+    pdf_messages = PDFMessage.objects.filter(
+        pdf=pdf
+    ).order_by("created_at")
+
     if request.method == "POST":
 
         try:
@@ -292,16 +297,14 @@ def pdf_detail(request, pdf_id):
 
                 prompt = f"""
 
+You are JARVIS AI.
 
-    You are JARVIS AI.
+Summarize this PDF in simple language.
 
-    Summarize this PDF in simple language.
+PDF Content:
 
-    PDF Content:
-
-    {text[:8000]}
-    """
-
+{text[:8000]}
+"""
 
                 summary = get_ai_response(
                     prompt
@@ -314,44 +317,77 @@ def pdf_detail(request, pdf_id):
                     ""
                 )
 
+                history = ""
+
+                recent_messages = PDFMessage.objects.filter(
+                    pdf=pdf
+                ).order_by("-created_at")[:10]
+
+                for msg in reversed(recent_messages):
+
+                    history += (
+                        f"{msg.role}: "
+                        f"{msg.content}\n"
+                    )
+
                 prompt = f"""
 
+You are JARVIS AI.
 
-    You are JARVIS AI.
+Previous Conversation:
 
-    Answer the question using only
-    the PDF content.
+{history}
 
-    PDF Content:
+PDF Content:
 
-    {text[:8000]}
+{text[:8000]}
 
-    Question:
+Current Question:
 
-    {question}
-    """
+{question}
 
+Use previous conversation
+and PDF content when relevant.
+"""
+
+                PDFMessage.objects.create(
+                    pdf=pdf,
+                    role="user",
+                    content=question
+                )
 
                 answer = get_ai_response(
                     prompt
                 )
 
-        except Exception:
+                PDFMessage.objects.create(
+                    pdf=pdf,
+                    role="assistant",
+                    content=answer
+                )
 
-            answer = """
+                pdf_messages = PDFMessage.objects.filter(
+                    pdf=pdf
+                ).order_by("created_at")
 
+        except Exception as e:
 
-    ⚠️ Unable to process this PDF.
+            answer = f"""
 
-    Possible reasons:
+⚠️ Unable to process this PDF.
 
-    • PDF is corrupted
-    • PDF contains images only
-    • AI service unavailable
+Error:
 
-    Please try again.
-    """
+{str(e)}
 
+Possible reasons:
+
+• PDF is corrupted
+• PDF contains images only
+• AI service unavailable
+
+Please try again.
+"""
 
     return render(
         request,
@@ -362,6 +398,7 @@ def pdf_detail(request, pdf_id):
             "summary": summary,
             "question": question,
             "answer": answer,
+            "pdf_messages": pdf_messages,
         }
     )
 
@@ -918,6 +955,24 @@ def youtube_summarizer(request):
             "video_info": video_info
         }
     )
+    
+@login_required
+def youtube_history(request):
+
+
+    videos = (
+        YouTubeVideo.objects
+        .filter(user=request.user)
+        .order_by("-created_at")
+    )
+
+    return render(
+        request,
+        "chat/youtube_history.html",
+        {
+            "videos": videos
+        }
+    )
 
 
 
@@ -1003,3 +1058,84 @@ def profile(request):
         "profile.html",
         context
     )
+    
+    
+    
+@login_required
+def youtube_video_detail(
+    request,
+    video_id
+):
+
+    video = get_object_or_404(
+        YouTubeVideo,
+        id=video_id,
+        user=request.user
+    )
+
+    answer = None
+    question = ""
+
+    if request.method == "POST":
+
+        question = request.POST.get(
+            "question",
+            ""
+        )
+
+        prompt = f"""
+You are JARVIS AI.
+
+Video Title:
+{video.title}
+
+Channel:
+{video.channel}
+
+Transcript:
+
+{video.transcript[:8000]}
+
+User Question:
+
+{question}
+
+Answer only using
+the video content.
+"""
+
+        answer = get_ai_response(
+            prompt
+        )
+
+    return render(
+        request,
+        "chat/youtube_video_detail.html",
+        {
+            "video": video,
+            "question": question,
+            "answer": answer
+        }
+    )
+    
+    
+@login_required
+def pdf_library(request):
+
+    pdfs = (
+        PDFFile.objects
+        .filter(user=request.user)
+        .order_by("-uploaded_at")
+    )
+
+    return render(
+        request,
+        "chat/pdf_library.html",
+        {
+            "pdfs": pdfs
+        }
+    )
+    
+    
+
+

@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <h1>🎥 {{ video.title }}</h1>
+
+    <p>
+        👤 {{ video.channel }}
+    </p>
+
+</div>
+
+<div class="result-card">
+
+    {% if video.thumbnail %}
+
+    <img
+        src="{{ video.thumbnail }}"
+        class="vision-preview"
+    >
+
+    {% endif %}
+
+</div>
+
+<div class="upload-card">
+
+<form method="POST">
+
+    {% csrf_token %}
+
+    <textarea
+        name="question"
+        placeholder="Ask anything about this video..."
+        rows="5"
+        required
+    >{{ question }}</textarea>
+
+    <br><br>
+
+    <button type="submit">
+
+        🚀 Ask JARVIS
+
+    </button>
+
+</form>
+
+</div>
+
+{% if answer %}
+
+<div class="result-card">
+
+    <h2>
+        🤖 JARVIS Response
+    </h2>
+
+    <div class="result-content">
+
+        {{ answer }}
+
+    </div>
+
+</div>
+
+{% endif %}
+
+{% endblock %}

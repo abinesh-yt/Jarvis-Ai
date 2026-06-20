@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <h1>📄 PDF Library</h1>
+
+    <p>
+        Previously uploaded PDFs.
+    </p>
+
+</div>
+
+<div class="memory-grid">
+
+{% for pdf in pdfs %}
+
+<div class="memory-card">
+
+    <div class="memory-icon">
+        📄
+    </div>
+
+    <h3>
+        {{ pdf.file.name }}
+    </h3>
+
+    <br>
+
+    <a
+        href="{% url 'pdf_detail' pdf.id %}"
+        class="new-chat-btn"
+    >
+        💬 Continue Chat
+    </a>
+
+</div>
+
+{% empty %}
+
+<div class="empty-card">
+
+    <h3>
+        No PDFs Yet
+    </h3>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+{% endblock %}

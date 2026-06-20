@@ -122,3 +122,58 @@ class YouTubeVideo(models.Model):
 
         return self.title
 
+
+
+class PDFMessage(models.Model):
+
+
+    pdf = models.ForeignKey(
+        PDFFile,
+        on_delete=models.CASCADE,
+        related_name="messages"
+    )
+
+    role = models.CharField(
+        max_length=20
+    )
+
+    content = models.TextField()
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    def __str__(self):
+
+        return (
+            f"{self.role}: "
+            f"{self.content[:30]}"
+        )
+
+
+class VideoMessage(models.Model):
+
+
+    video = models.ForeignKey(
+        YouTubeVideo,
+        on_delete=models.CASCADE,
+        related_name="messages"
+    )
+
+    role = models.CharField(
+        max_length=20
+    )
+
+    content = models.TextField()
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    def __str__(self):
+
+        return (
+            f"{self.role}: "
+            f"{self.content[:30]}"
+        )
+
