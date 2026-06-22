@@ -4,13 +4,30 @@
 
 <div class="page-header">
 
+    <h1>🎥 Video Library</h1>
 
-<h1>🎥 Recent Videos</h1>
+    <p>
+        Total Videos: {{ total_videos }}
+    </p>
 
-<p>
-    Previously analyzed YouTube videos.
-</p>
+</div>
 
+<div class="upload-card">
+
+    <form method="GET">
+
+        <input
+            type="text"
+            name="q"
+            value="{{ query }}"
+            placeholder="Search videos..."
+        >
+
+        <button type="submit">
+            🔍 Search
+        </button>
+
+    </form>
 
 </div>
 
@@ -20,46 +37,71 @@
 
 <div class="memory-card">
 
+    {% if video.thumbnail %}
 
-{% if video.thumbnail %}
+    <img
+        src="{{ video.thumbnail }}"
+        class="vision-preview"
+        alt="Thumbnail"
+    >
 
-<img
-    src="{{ video.thumbnail }}"
-    class="vision-preview"
-    alt="Thumbnail"
+    {% endif %}
+
+    <h3>
+
+        {{ video.title }}
+
+    </h3>
+
+    <p>
+
+        👤 {{ video.channel }}
+
+    </p>
+
+    <br>
+
+    <div
+        style="
+        display:flex;
+        gap:10px;
+        flex-wrap:wrap;
+        "
+    >
+
+        <a
+            href="{{ video.url }}"
+            target="_blank"
+            class="new-chat-btn"
+        >
+            ▶ Open
+        </a>
+
+        <a
+            href="{% url 'youtube_video_detail' video.id %}"
+            class="new-chat-btn"
+        >
+            💬 Chat
+        </a>
+
+        <form
+    method="POST"
+    action="{% url 'delete_video' video.id %}"
 >
 
-{% endif %}
+    {% csrf_token %}
 
-<h3>
-    {{ video.title }}
-</h3>
+    <button
+        type="submit"
+        class="delete-btn"
+        onclick="return confirm('Delete this video?')"
+    >
+        🗑 Delete
+    </button>
 
-<p>
-    👤 {{ video.channel }}
-</p>
+</form>
 
-<br>
-
-<div style="display:flex; gap:10px;">
-
-<a
-    href="{{ video.url }}"
-    target="_blank"
-    class="new-chat-btn"
->
-    ▶ Open Video
-</a>
-
-<a
-    href="{% url 'youtube_video_detail' video.id %}"
-    class="new-chat-btn"
->
-    💬 Continue Chat
-</a>
-
-</div>
-
+    </div>
 
 </div>
 
@@ -67,16 +109,18 @@
 
 <div class="empty-card">
 
+    <h3>
 
-<h3>
-    No Videos Yet
-</h3>
+        No Videos Found
 
-<p>
-    Analyze a YouTube video to
-    see it here.
-</p>
+    </h3>
 
+    <p>
+
+        Analyze a YouTube video
+        and it will appear here.
+
+    </p>
 
 </div>
 

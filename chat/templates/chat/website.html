@@ -7,8 +7,17 @@
     <h1>🌐 Website AI</h1>
 
     <p>
-        Summarize any website instantly using JARVIS AI.
+        Analyze websites with JARVIS AI.
     </p>
+
+    <br>
+
+    <a
+        href="{% url 'website_library' %}"
+        class="new-chat-btn"
+    >
+        🌐 View Website Library
+    </a>
 
 </div>
 
@@ -21,10 +30,38 @@
         {{ form.as_p }}
 
         <button type="submit">
-            🚀 Summarize Website
+            🚀 Analyze Website
         </button>
 
     </form>
+
+</div>
+
+<div class="dashboard-grid">
+
+    <div class="yt-tool-card">
+        <div class="yt-tool-icon">🌐</div>
+        <h3>Website Summary</h3>
+        <p>Generate website summaries.</p>
+    </div>
+
+    <div class="yt-tool-card">
+        <div class="yt-tool-icon">🧠</div>
+        <h3>Explain Simply</h3>
+        <p>Easy explanations.</p>
+    </div>
+
+    <div class="yt-tool-card">
+        <div class="yt-tool-icon">📚</div>
+        <h3>Study Notes</h3>
+        <p>Create notes instantly.</p>
+    </div>
+
+    <div class="yt-tool-card">
+        <div class="yt-tool-icon">❓</div>
+        <h3>Quiz Generator</h3>
+        <p>Create quiz questions.</p>
+    </div>
 
 </div>
 
@@ -32,7 +69,9 @@
 
 <div class="result-card">
 
-    <h2>📋 Website Summary</h2>
+    <h2>
+        📋 Website Summary
+    </h2>
 
     <div class="result-content">
 

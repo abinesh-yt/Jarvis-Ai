@@ -4,36 +4,112 @@
 
 <div class="page-header">
 
+    <h1>📄 PDF Assistant</h1>
 
-<h1>📄 PDF Assistant</h1>
+    <p>
+        {{ pdf.file.name }}
+    </p>
 
-<p>
-    {{ pdf.file.name }}
-</p>
+    <br>
 
-<br>
-
-<a
-    href="{% url 'pdf_library' %}"
-    class="new-chat-btn"
+    <div
+    style="
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    "
 >
-    📚 PDF Library
-</a>
 
+    <a
+        href="{% url 'pdf_library' %}"
+        class="new-chat-btn"
+    >
+        📚 PDF Library
+    </a>
+
+    <form
+        method="POST"
+        action="{% url 'delete_pdf' pdf.id %}"
+    >
+
+        {% csrf_token %}
+
+        <button
+            type="submit"
+            class="new-chat-btn"
+            onclick="
+            return confirm(
+                'Delete this PDF permanently?'
+            )
+            "
+        >
+            🗑 Delete PDF
+        </button>
+
+    </form>
+
+</div>
+
+
+    
 
 </div>
 
 <div class="dashboard-grid">
 
+    <div
+        class="yt-tool-card pdf-prompt"
+        data-prompt="Summarize this PDF"
+    >
+        <div class="yt-tool-icon">📄</div>
+        <h3>Summary</h3>
+        <p>Generate a PDF summary.</p>
+    </div>
 
-<div class="dashboard-card">
-    📄 PDF Loaded
-</div>
+    <div
+        class="yt-tool-card pdf-prompt"
+        data-prompt="Explain this PDF simply"
+    >
+        <div class="yt-tool-icon">🧠</div>
+        <h3>Explain</h3>
+        <p>Easy explanation.</p>
+    </div>
 
-<div class="dashboard-card">
-    🤖 AI Ready
-</div>
+    <div
+        class="yt-tool-card pdf-prompt"
+        data-prompt="What are the key points?"
+    >
+        <div class="yt-tool-icon">🎯</div>
+        <h3>Key Points</h3>
+        <p>Important concepts.</p>
+    </div>
 
+    <div
+        class="yt-tool-card pdf-prompt"
+        data-prompt="Create quiz questions"
+    >
+        <div class="yt-tool-icon">❓</div>
+        <h3>Quiz</h3>
+        <p>Generate MCQs.</p>
+    </div>
+
+    <div
+        class="yt-tool-card pdf-prompt"
+        data-prompt="Create flashcards"
+    >
+        <div class="yt-tool-icon">🃏</div>
+        <h3>Flashcards</h3>
+        <p>Quick revision cards.</p>
+    </div>
+
+    <div
+        class="yt-tool-card pdf-prompt"
+        data-prompt="Create revision notes"
+    >
+        <div class="yt-tool-icon">📚</div>
+        <h3>Revision Notes</h3>
+        <p>Exam preparation notes.</p>
+    </div>
 
 </div>
 
@@ -41,145 +117,154 @@
 
 <div class="result-card">
 
+    <h2>
+        💬 PDF Conversation
+    </h2>
 
-<h2>
-    💬 PDF Conversation
-</h2>
+    {% for msg in pdf_messages %}
 
-{% for msg in pdf_messages %}
+        {% if msg.role == "user" %}
 
-<div
-    class="message-wrapper {{ msg.role }}"
-    style="margin-bottom:15px;"
->
+        <div
+            style="
+            display:flex;
+            justify-content:flex-end;
+            margin-bottom:20px;
+            "
+        >
 
-    <div class="message-bubble">
+            <div
+                style="
+                max-width:70%;
+                padding:15px;
+                border-radius:18px;
+                background:#2563eb;
+                color:white;
+                "
+            >
 
-        {{ msg.content }}
+                <div
+                    style="
+                    white-space:pre-wrap;
+                    line-height:1.8;
+                    "
+                >
+                    {{ msg.content }}
+                </div>
 
-    </div>
+            </div>
 
-</div>
+        </div>
 
-{% endfor %}
+        {% else %}
 
+        <div
+            style="
+            display:flex;
+            justify-content:flex-start;
+            margin-bottom:20px;
+            "
+        >
 
-</div>
+            <div
+                style="
+                max-width:85%;
+                padding:18px;
+                border-radius:18px;
+                background:#1e293b;
+                color:white;
+                "
+            >
 
-{% endif %}
+                <div
+                    style="
+                    white-space:pre-wrap;
+                    line-height:1.9;
+                    "
+                >
+                    {{ msg.content }}
+                </div>
 
+            </div>
 
-<div class="action-card">
+        </div>
 
+        {% endif %}
 
-<h2>
-    🚀 Generate Summary
-</h2>
-
-<form method="POST">
-
-    {% csrf_token %}
-
-    <button
-        type="submit"
-        name="summarize"
-    >
-        Generate Summary
-    </button>
-
-</form>
-
-
-</div>
-
-<div class="action-card">
-
-
-<h2>
-    ❓ Ask About PDF
-</h2>
-
-<form method="POST">
-
-    {% csrf_token %}
-
-    <input
-        type="text"
-        name="question"
-        placeholder="Ask anything about this PDF..."
-        required
-    >
-
-    <button
-        type="submit"
-        name="ask"
-    >
-        🤖 Ask JARVIS
-    </button>
-
-</form>
-
-
-</div>
-
-{% if summary %}
-
-<div class="result-card">
-
-
-<h2>
-    🤖 PDF Summary
-</h2>
-
-<div class="result-content">
-
-    {{ summary }}
-
-</div>
-
+    {% endfor %}
 
 </div>
 
 {% endif %}
 
-{% if answer %}
+<div class="upload-card">
 
-<div class="result-card">
+    <form method="POST">
 
+        {% csrf_token %}
 
-<h2>
-    💡 JARVIS Answer
-</h2>
+        <textarea
+            id="pdf-question"
+            name="question"
+            placeholder="Ask anything about this PDF..."
+            rows="5"
+            style="
+            width:100%;
+            padding:18px;
+            border-radius:12px;
+            resize:none;
+            "
+            required
+        ></textarea>
 
-<div class="result-content">
+        <br><br>
 
-    {{ answer }}
+        <button
+            type="submit"
+            name="ask"
+        >
+            🚀 Ask JARVIS
+        </button>
+
+    </form>
 
 </div>
 
+<script>
 
-</div>
+const promptCards =
+document.querySelectorAll(".pdf-prompt");
 
-{% endif %}
+const questionBox =
+document.getElementById(
+    "pdf-question"
+);
 
-<details class="result-card">
+promptCards.forEach(card => {
 
+    card.addEventListener(
+        "click",
+        () => {
 
-<summary>
-    📚 View Extracted Text
-</summary>
+            questionBox.value =
+                card.dataset.prompt;
 
-<br>
+            questionBox.focus();
 
-<pre>
+        }
+    );
 
+});
 
-{{ text }}
+window.onload = function() {
 
+    window.scrollTo(
+        0,
+        document.body.scrollHeight
+    );
 
-</pre>
+};
 
-
-</details>
+</script>
 
 {% endblock %}

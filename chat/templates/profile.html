@@ -4,137 +4,136 @@
 
 <div class="page-header">
 
+    <h1>
+        👤 Profile
+    </h1>
 
-<h1>
-    👤 Profile
-</h1>
-
-<p>
-    Your JARVIS AI account overview.
-</p>
-
+    <p>
+        Your JARVIS AI account overview.
+    </p>
 
 </div>
 
 <div class="user-card">
 
+    <div class="user-avatar">
+        👤
+    </div>
 
-<div class="user-avatar">
-    👤
-</div>
+    <div>
 
-<div>
+        <h2>
+            {{ user.username }}
+        </h2>
 
-    <h2>
-        {{ user.username }}
-    </h2>
+        <p>
+            {{ user.email }}
+        </p>
 
+        <p>
+            Joined:
+            {{ user.date_joined|date:"F d, Y" }}
+        </p>
 
-
-    <p>
-        {{ user.email }}
-    </p>
-
-    <p>
-        Joined:
-        {{ user.date_joined|date:"F d, Y" }}
-    </p>
-
-</div>
-
+    </div>
 
 </div>
 
 <div class="stats-grid">
 
+    <div class="stat-card">
+        <h2>{{ chat_count }}</h2>
+        <p>💬 Chats</p>
+    </div>
 
-<div class="stat-card">
+    <div class="stat-card">
+        <h2>{{ pdf_count }}</h2>
+        <p>📄 PDFs</p>
+    </div>
 
-    <h2>{{ chat_count }}</h2>
+    <div class="stat-card">
+        <h2>{{ image_count }}</h2>
+        <p>🖼 Images</p>
+    </div>
 
-    <p>💬 Chats</p>
+    <div class="stat-card">
+        <h2>{{ video_count }}</h2>
+        <p>🎥 Videos</p>
+    </div>
 
-</div>
+    <div class="stat-card">
+        <h2>{{ website_count }}</h2>
+        <p>🌐 Websites</p>
+    </div>
 
-<div class="stat-card">
+    <div class="stat-card">
+        <h2>{{ memory_count }}</h2>
+        <p>🧠 Memories</p>
+    </div>
 
-    <h2>{{ pdf_count }}</h2>
-
-    <p>📄 PDFs</p>
-
-</div>
-
-<div class="stat-card">
-
-    <h2>{{ image_count }}</h2>
-
-    <p>🖼️ Images</p>
-
-</div>
-
-<div class="stat-card">
-
-    <h2>{{ memory_count }}</h2>
-
-    <p>🧠 Memories</p>
-
-</div>
-
+    <div class="stat-card">
+        <h2>{{ xp_points }}</h2>
+        <p>🏆 XP</p>
+    </div>
 
 </div>
 
 <div class="result-card">
 
+    <h2>
+        🚀 Workspace Information
+    </h2>
 
-<div class="result-card">
+    <div class="profile-info">
 
+        <p>✅ Account Active</p>
 
-<h2>
-    🚀 Workspace Information
-</h2>
+        <p>
+            📅 Joined:
+            {{ user.date_joined|date:"F d, Y" }}
+        </p>
 
-<div class="profile-info">
+        <p>
+            💬 Total Chats:
+            {{ chat_count }}
+        </p>
 
-    <p>✅ Account Active</p>
+        <p>
+            📄 PDFs Uploaded:
+            {{ pdf_count }}
+        </p>
 
-    <p>🤖 AI Engine: Groq + Gemini</p>
+        <p>
+            🖼 Images Uploaded:
+            {{ image_count }}
+        </p>
 
-    <p>
-        📅 Joined:
-        {{ user.date_joined|date:"F d, Y" }}
-    </p>
+        <p>
+            🎥 Videos Analyzed:
+            {{ video_count }}
+        </p>
 
-    <p>
-        💬 Total Chats:
-        {{ chat_count }}
-    </p>
+        <p>
+            🌐 Websites Saved:
+            {{ website_count }}
+        </p>
 
-    <p>
-        📄 PDFs Uploaded:
-        {{ pdf_count }}
-    </p>
+        <p>
+            🧠 Memories Saved:
+            {{ memory_count }}
+        </p>
 
-    <p>
-        🖼️ Images Uploaded:
-        {{ image_count }}
-    </p>
+        <p>
+            🏆 XP Points:
+            {{ xp_points }}
+        </p>
 
-    <p>
-        🧠 Memories Saved:
-        {{ memory_count }}
-    </p>
+        <p>
+            🚀 Version:
+            JARVIS AI v1.2.4
+        </p>
 
-    <p>
-        🚀 Version:
-        JARVIS AI v1.2.4
-    </p>
-
-</div>
-
-
-</div>
-
-
+    </div>
 
 </div>
 

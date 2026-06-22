@@ -4,72 +4,146 @@
 
 <div class="page-header">
 
-    <h1>🖼 Vision AI</h1>
+    <h1>🌐 {{ website.title }}</h1>
 
     <p>
 
-        {{ image.image.name }}
+        {{ website.url }}
 
     </p>
 
-</div>
+    <br>
 
-<div class="result-card">
-
-    <img
-        src="{{ image.image.url }}"
-        class="vision-preview"
+    <a
+        href="{% url 'website_library' %}"
+        class="new-chat-btn"
     >
-
-</div>
-
-<div class="yt-tools-grid">
-
-    <div
-        class="yt-tool-card image-prompt"
-        data-prompt="Describe this image in detail"
-    >
-        👀
-        <h3>Analyze</h3>
-    </div>
-
-    <div
-        class="yt-tool-card image-prompt"
-        data-prompt="Extract all text from this image"
-    >
-        📄
-        <h3>OCR Text</h3>
-    </div>
-
-    <div
-        class="yt-tool-card image-prompt"
-        data-prompt="Explain this image simply"
-    >
-        🧠
-        <h3>Explain</h3>
-    </div>
-
-    <div
-        class="yt-tool-card image-prompt"
-        data-prompt="Create quiz questions from this image"
-    >
-        ❓
-        <h3>Quiz</h3>
-    </div>
+        📚 Website Library
+    </a>
 
 </div>
 
-{% if image_messages %}
+<div class="dashboard-grid">
+
+    <div
+        class="yt-tool-card website-prompt"
+        data-prompt="Summarize this website"
+    >
+        <div class="yt-tool-icon">
+            📄
+        </div>
+
+        <h3>
+            Summary
+        </h3>
+
+        <p>
+            Quick website summary.
+        </p>
+
+    </div>
+
+    <div
+        class="yt-tool-card website-prompt"
+        data-prompt="Explain this website simply"
+    >
+        <div class="yt-tool-icon">
+            🧠
+        </div>
+
+        <h3>
+            Explain
+        </h3>
+
+        <p>
+            Simple explanation.
+        </p>
+
+    </div>
+
+    <div
+        class="yt-tool-card website-prompt"
+        data-prompt="What are the key points?"
+    >
+        <div class="yt-tool-icon">
+            🎯
+        </div>
+
+        <h3>
+            Key Points
+        </h3>
+
+        <p>
+            Important information.
+        </p>
+
+    </div>
+
+    <div
+        class="yt-tool-card website-prompt"
+        data-prompt="Create quiz questions"
+    >
+        <div class="yt-tool-icon">
+            ❓
+        </div>
+
+        <h3>
+            Quiz
+        </h3>
+
+        <p>
+            Generate MCQs.
+        </p>
+
+    </div>
+
+    <div
+        class="yt-tool-card website-prompt"
+        data-prompt="Create revision notes"
+    >
+        <div class="yt-tool-icon">
+            📚
+        </div>
+
+        <h3>
+            Notes
+        </h3>
+
+        <p>
+            Study notes.
+        </p>
+
+    </div>
+
+    <div
+        class="yt-tool-card website-prompt"
+        data-prompt="Give important interview questions from this website"
+    >
+        <div class="yt-tool-icon">
+            💼
+        </div>
+
+        <h3>
+            Interview
+        </h3>
+
+        <p>
+            Interview preparation.
+        </p>
+
+    </div>
+
+</div>
+
+{% if website_messages %}
 
 <div class="result-card">
 
     <h2>
-
-        💬 Image Conversation
-
+        💬 Website Conversation
     </h2>
 
-    {% for msg in image_messages %}
+    {% for msg in website_messages %}
 
         {% if msg.role == "user" %}
 
@@ -152,10 +226,10 @@
         {% csrf_token %}
 
         <textarea
-            id="image-question"
+            id="website-question"
             name="question"
             rows="5"
-            placeholder="Ask anything about this image..."
+            placeholder="Ask anything about this website..."
             required
             style="
             width:100%;
@@ -181,12 +255,12 @@
 
 const promptCards =
 document.querySelectorAll(
-    ".image-prompt"
+    ".website-prompt"
 );
 
 const questionBox =
 document.getElementById(
-    "image-question"
+    "website-question"
 );
 
 promptCards.forEach(card => {

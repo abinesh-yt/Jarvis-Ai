@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login
-from django.contrib.auth import logout
+from django.contrib.auth import authenticate, login, logout
+
+from chat.models import UserXP
+
 
 def register(request):
 
@@ -14,23 +16,34 @@ def register(request):
         password = request.POST.get("password")
 
         if User.objects.filter(username=username).exists():
+
             error = "Username already exists"
 
         else:
-            User.objects.create_user(
+
+            user = User.objects.create_user(
                 username=username,
                 email=email,
                 password=password
             )
 
-            return redirect('/accounts/login/')
+            UserXP.objects.create(
+                user=user,
+                points=0
+            )
+
+            return redirect(
+                "/accounts/login/"
+            )
 
     return render(
         request,
-        'accounts/register.html',
-        {'error': error}
+        "accounts/register.html",
+        {
+            "error": error
+        }
     )
-    
+
 
 def login_view(request):
 
@@ -48,18 +61,38 @@ def login_view(request):
         )
 
         if user is not None:
+
+            UserXP.objects.get_or_create(
+                user=user,
+                defaults={
+                    "points": 0
+                }
+            )
+
             login(request, user)
-            return redirect('/dashboard/')
+
+            return redirect(
+                "/dashboard/"
+            )
 
         else:
-            error = "Invalid username or password"
+
+            error = (
+                "Invalid username "
+                "or password"
+            )
 
     return render(
         request,
-        'accounts/login.html',
-        {'error': error}
+        "accounts/login.html",
+        {
+            "error": error
+        }
     )
-    
+
+
 def logout_view(request):
+
     logout(request)
-    return redirect('/')
+
+    return redirect("/")

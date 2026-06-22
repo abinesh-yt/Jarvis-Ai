@@ -98,5 +98,78 @@ urlpatterns = [
     name="pdf_library"
 ),
     
+    
+    
+
+    
+    path(
+    "image/library/",
+    views.image_library,
+    name="image_library"
+),
+
+path(
+    "image/delete/<int:image_id>/",
+    views.delete_image,
+    name="delete_image"
+),
+path(
+    "website/library/",
+    views.website_library,
+    name="website_library"
+),
+
+
+
+
+path(
+    "website/<int:website_id>/",
+    views.website_detail,
+    name="website_detail"
+),
+
+
+
+path(
+    "pdf/delete/<int:pdf_id>/",
+    views.delete_pdf,
+    name="delete_pdf"
+),
+
+path(
+    "video/delete/<int:video_id>/",
+    views.delete_video,
+    name="delete_video"
+),
+
+path(
+    "website/delete/<int:website_id>/",
+    views.delete_website,
+    name="delete_website"
+),
+
+path(
+    "favorite/<int:chat_id>/",
+    views.toggle_favorite,
+    name="toggle_favorite"
+),
+
+path(
+    "pin/<int:chat_id>/",
+    views.toggle_pin,
+    name="toggle_pin"
+),
+
+path(
+    "export/chat/<int:chat_id>/",
+    views.export_chat_pdf,
+    name="export_chat_pdf"
+),
+path(
+    "<int:chat_id>/",
+    chat_detail,
+    name="chat_detail"
+),
+    
 ]
 

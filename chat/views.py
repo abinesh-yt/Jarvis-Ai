@@ -6,10 +6,24 @@ from .models import (
     PDFFile,
     PDFMessage,
     ImageFile,
+    ImageMessage,
     Memory,
     YouTubeVideo,
     VideoMessage
 )
+
+
+import requests
+
+from bs4 import BeautifulSoup
+
+from .models import (
+    Website,
+    WebsiteMessage
+)
+
+from .models import Website, WebsiteMessage
+from .models import UserXP
 from .ai import get_ai_response
 from .forms import PDFUploadForm
 from pypdf import PdfReader
@@ -27,22 +41,77 @@ from youtube_transcript_api import YouTubeTranscriptApi
 from .forms import YouTubeForm
 from django.contrib.auth.decorators import login_required
 import yt_dlp
+from django.http import HttpResponse
 
+from reportlab.platypus import (
+    SimpleDocTemplate,
+    Paragraph,
+    Spacer
+)
+
+from reportlab.lib.styles import (
+    getSampleStyleSheet
+)
 
 @login_required
 def chat_home(request):
 
+    query = request.GET.get(
+        "q",
+        ""
+    )
+
     chats = ChatSession.objects.filter(
         user=request.user
-    ).order_by('-created_at')
+    )
+
+    if query:
+
+        chats = chats.filter(
+            title__icontains=query
+        )
+
+    pinned_chats = chats.filter(
+        is_pinned=True
+    ).order_by(
+        "-created_at"
+    )
+
+    favorite_chats = chats.filter(
+        is_favorite=True
+    ).order_by(
+        "-created_at"
+    )
+
+    chats = chats.order_by(
+        "-is_pinned",
+        "-created_at"
+    )
+
+    context = {
+
+        "chats": chats,
+
+        "pinned_chats":
+        pinned_chats,
+
+        "favorite_chats":
+        favorite_chats,
+
+        "query": query,
+
+        "total_chats":
+        chats.count()
+
+    }
 
     return render(
         request,
-        'chat/chat.html',
-        {'chats': chats}
+        "chat/chat.html",
+        context
     )
-
-
+    
+    
 @login_required
 def new_chat(request):
 
@@ -62,31 +131,56 @@ def chat_detail(request, chat_id):
         user=request.user
     )
 
+    xp, created = UserXP.objects.get_or_create(
+        user=request.user,
+        defaults={
+            "points": 0
+        }
+    )
+
     if request.method == "POST":
 
-        content = request.POST.get("message")
+        content = request.POST.get(
+            "message"
+        )
 
         if not content:
-            return redirect(f"/chat/{chat.id}/")
+            return redirect(
+                f"/chat/{chat.id}/"
+            )
 
         # Remember
-        if content.lower().startswith("remember"):
+
+        if content.lower().startswith(
+            "remember"
+        ):
 
             Memory.objects.create(
                 user=request.user,
                 content=content
             )
 
+            xp.points += 5
+            xp.save()
+
             Message.objects.create(
                 chat=chat,
                 role="assistant",
-                content="🧠 Memory saved successfully!"
+                content=(
+                    "🧠 Memory saved successfully!\n\n"
+                    "🏆 +5 XP earned!"
+                )
             )
 
-            return redirect(f"/chat/{chat.id}/")
+            return redirect(
+                f"/chat/{chat.id}/"
+            )
 
         # Forget
-        elif content.lower().startswith("forget"):
+
+        elif content.lower().startswith(
+            "forget"
+        ):
 
             keyword = content.replace(
                 "forget",
@@ -105,13 +199,21 @@ def chat_detail(request, chat_id):
             Message.objects.create(
                 chat=chat,
                 role="assistant",
-                content=f"🗑️ Deleted {count} memory(s)."
+                content=(
+                    f"🗑️ Deleted "
+                    f"{count} memory(s)."
+                )
             )
 
-            return redirect(f"/chat/{chat.id}/")
+            return redirect(
+                f"/chat/{chat.id}/"
+            )
 
         # Show Memories
-        elif content.lower() == "show memories":
+
+        elif content.lower() == (
+            "show memories"
+        ):
 
             memories = Memory.objects.filter(
                 user=request.user
@@ -127,25 +229,37 @@ def chat_detail(request, chat_id):
             Message.objects.create(
                 chat=chat,
                 role="assistant",
-                content=f"🧠 Your Memories:\n\n{memory_list}"
+                content=(
+                    f"🧠 Your Memories:\n\n"
+                    f"{memory_list}"
+                )
             )
 
-            return redirect(f"/chat/{chat.id}/")
+            return redirect(
+                f"/chat/{chat.id}/"
+            )
 
         # Save User Message
+
         Message.objects.create(
             chat=chat,
             role="user",
             content=content
         )
 
+        xp.points += 2
+        xp.save()
+
         # Auto Title
+
         if chat.title == "New Chat":
 
             chat.title = content[:40]
+
             chat.save()
 
         # Memories
+
         memories = Memory.objects.filter(
             user=request.user
         )
@@ -157,7 +271,8 @@ def chat_detail(request, chat_id):
             ]
         )
 
-        # Conversation History
+        # History
+
         history = Message.objects.filter(
             chat=chat
         ).order_by("created_at")
@@ -171,7 +286,6 @@ def chat_detail(request, chat_id):
                 f"{msg.content}\n"
             )
 
-        # AI Prompt
         prompt = f"""
 
 
@@ -190,6 +304,7 @@ def chat_detail(request, chat_id):
     {content}
 
     Use conversation history and memories when relevant.
+
     """
 
 
@@ -200,10 +315,14 @@ def chat_detail(request, chat_id):
         Message.objects.create(
             chat=chat,
             role="assistant",
-            content=ai_response
+            content=(
+                ai_response
+            )
         )
 
-        return redirect(f"/chat/{chat.id}/")
+        return redirect(
+            f"/chat/{chat.id}/"
+        )
 
     messages = Message.objects.filter(
         chat=chat
@@ -219,10 +338,12 @@ def chat_detail(request, chat_id):
     )
 
 
+
     
     
 @login_required
 def upload_pdf(request):
+
 
     if request.method == "POST":
 
@@ -233,13 +354,29 @@ def upload_pdf(request):
 
         if form.is_valid():
 
-            pdf = form.save(commit=False)
+            pdf = form.save(
+                commit=False
+            )
 
             pdf.user = request.user
 
             pdf.save()
 
-            return redirect("upload_pdf")
+            xp, created = (
+                UserXP.objects.get_or_create(
+                    user=request.user,
+                    defaults={
+                        "points": 0
+                    }
+                )
+            )
+
+            xp.points += 10
+            xp.save()
+
+            return redirect(
+                "upload_pdf"
+            )
 
     else:
 
@@ -247,7 +384,9 @@ def upload_pdf(request):
 
     pdfs = PDFFile.objects.filter(
         user=request.user
-    ).order_by("-uploaded_at")
+    ).order_by(
+        "-uploaded_at"
+    )
 
     return render(
         request,
@@ -257,6 +396,8 @@ def upload_pdf(request):
             "pdfs": pdfs
         }
     )
+    
+
     
 
 @login_required
@@ -417,6 +558,7 @@ genai.configure(
 @login_required
 def upload_image(request):
 
+    
     if request.method == "POST":
 
         form = ImageUploadForm(
@@ -426,13 +568,30 @@ def upload_image(request):
 
         if form.is_valid():
 
-            image = form.save(commit=False)
+            image = form.save(
+                commit=False
+            )
 
             image.user = request.user
 
             image.save()
 
-            return redirect("upload_image")
+            xp, created = (
+                UserXP.objects.get_or_create(
+                    user=request.user,
+                    defaults={
+                        "points": 0
+                    }
+                )
+            )
+
+            xp.points += 10
+
+            xp.save()
+
+            return redirect(
+                "image_library"
+            )
 
     else:
 
@@ -440,7 +599,9 @@ def upload_image(request):
 
     images = ImageFile.objects.filter(
         user=request.user
-    ).order_by("-uploaded_at")
+    ).order_by(
+        "-uploaded_at"
+    )
 
     return render(
         request,
@@ -451,68 +612,129 @@ def upload_image(request):
         }
     )
     
+    
 @login_required
 def image_detail(request, image_id):
-    
 
     image = ImageFile.objects.get(
         id=image_id,
         user=request.user
     )
 
-    analysis = None
+    image_messages = (
+        ImageMessage.objects.filter(
+            image=image
+        ).order_by(
+            "created_at"
+        )
+    )
+
     question = ""
-    answer = None
 
     if request.method == "POST":
 
-        model = genai.GenerativeModel(
-            "gemini-2.5-flash"
-        )
+        try:
 
-        uploaded_image = PIL.Image.open(
-            image.image.path
-        )
+            model = genai.GenerativeModel(
+                "gemini-2.5-flash"
+            )
 
-        if "analyze" in request.POST:
-
-            response = model.generate_content([
-                "Describe this image in detail.",
-                uploaded_image
-            ])
-
-            analysis = response.text
-
-        elif "ask" in request.POST:
+            uploaded_image = (
+                PIL.Image.open(
+                    image.image.path
+                )
+            )
 
             question = request.POST.get(
                 "question",
                 ""
             )
 
-            response = model.generate_content([
-                f"""
-                Answer the user's question
-                about this image.
+            history = ""
 
-                Question:
-                {question}
-                """,
-                uploaded_image
-            ])
+            recent_messages = (
+                ImageMessage.objects.filter(
+                    image=image
+                )
+                .order_by(
+                    "-created_at"
+                )[:10]
+            )
+
+            for msg in reversed(
+                recent_messages
+            ):
+
+                history += (
+                    f"{msg.role}: "
+                    f"{msg.content}\n"
+                )
+
+            ImageMessage.objects.create(
+                image=image,
+                role="user",
+                content=question
+            )
+
+            response = (
+                model.generate_content(
+                    [
+                        f"""
+
+You are JARVIS AI.
+
+Previous Conversation:
+
+{history}
+
+User Question:
+
+{question}
+
+Use previous conversation
+when relevant.
+                        """,
+                        uploaded_image
+                    ]
+                )
+            )
 
             answer = response.text
 
+            ImageMessage.objects.create(
+                image=image,
+                role="assistant",
+                content=answer
+            )
+
+            image_messages = (
+                ImageMessage.objects.filter(
+                    image=image
+                ).order_by(
+                    "created_at"
+                )
+            )
+
+        except Exception as e:
+
+            ImageMessage.objects.create(
+                image=image,
+                role="assistant",
+                content=f"""
+⚠️ Error
+
+{str(e)}
+"""
+            )
+
     return render(
-    request,
-    "chat/image_detail.html",
-    {
-        "image": image,
-        "analysis": analysis,
-        "question": question,
-        "answer": answer,
-    }
-)
+        request,
+        "chat/image_detail.html",
+        {
+            "image": image,
+            "image_messages": image_messages,
+        }
+    )
     
     
 @login_required
@@ -622,7 +844,6 @@ def delete_memory(request, memory_id):
 @login_required
 def website_summarizer(request):
 
-
     summary = None
 
     if request.method == "POST":
@@ -635,10 +856,30 @@ def website_summarizer(request):
 
                 url = form.cleaned_data["url"]
 
+                existing = Website.objects.filter(
+                    user=request.user,
+                    url=url
+                ).first()
+
+                if existing:
+
+                    return redirect(
+                        "website_detail",
+                        existing.id
+                    )
+
+                headers = {
+                    "User-Agent":
+                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+                }
+
                 response = requests.get(
                     url,
-                    timeout=10
+                    headers=headers,
+                    timeout=15
                 )
+
+                response.raise_for_status()
 
                 soup = BeautifulSoup(
                     response.text,
@@ -650,46 +891,41 @@ def website_summarizer(request):
                     strip=True
                 )
 
-                prompt = f"""
-
-
-    You are JARVIS AI.
-
-    Analyze and summarize this website.
-
-    Website Content:
-
-    {text[:8000]}
-
-    Provide:
-
-    1. Main purpose
-    2. Key information
-    3. Important takeaways
-    4. Short summary
-    """
-
-    
-                summary = get_ai_response(
-                    prompt
+                title = (
+                    soup.title.string.strip()
+                    if soup.title and soup.title.string
+                    else url
                 )
 
-            except Exception:
+                website = Website.objects.create(
+                    user=request.user,
+                    url=url,
+                    title=title,
+                    content=text[:50000]
+                )
 
-                summary = """
-    
+                xp, created = UserXP.objects.get_or_create(
+                    user=request.user,
+                    defaults={
+                        "points": 0
+                    }
+                )
 
-    ⚠️ Unable to access this website.
+                xp.points += 10
+                xp.save()
 
-    Possible reasons:
+                return redirect(
+                    "website_detail",
+                    website.id
+                )
 
-    • Invalid URL
-    • Website blocked requests
-    • Website unavailable
+            except Exception as e:
 
-    Try another website.
-    """
+                summary = f"""
+⚠️ Website Error
 
+{str(e)}
+"""
 
     else:
 
@@ -702,10 +938,7 @@ def website_summarizer(request):
             "form": form,
             "summary": summary
         }
-)
-
-
-    
+    )    
     
 def get_video_id(url):
 
@@ -802,10 +1035,6 @@ def save_or_get_video(
 @login_required
 def youtube_summarizer(request):
 
-
-    summary = None
-    video_info = None
-
     if request.method == "POST":
 
         form = YouTubeForm(request.POST)
@@ -813,10 +1042,6 @@ def youtube_summarizer(request):
         if form.is_valid():
 
             url = form.cleaned_data["url"]
-
-            question = request.POST.get(
-                "question"
-            )
 
             saved_video = (
                 YouTubeVideo.objects.filter(
@@ -827,120 +1052,84 @@ def youtube_summarizer(request):
 
             if saved_video:
 
-                transcript_text = (
-                    saved_video.transcript
+                return redirect(
+                    "youtube_video_detail",
+                    saved_video.id
                 )
 
-                video_info = {
-                    "title":
-                    saved_video.title,
-
-                    "channel":
-                    saved_video.channel,
-
-                    "thumbnail":
-                    saved_video.thumbnail
-                }
-
-            else:
-
-                video_info = get_video_info(
-                    url
-                )
-
-                video_id = get_video_id(
-                    url
-                )
-
-                try:
-
-                    ytt_api = (
-                        YouTubeTranscriptApi()
-                    )
-
-                    transcript = (
-                        ytt_api.fetch(
-                            video_id
-                        )
-                    )
-
-                    transcript_text = (
-                        " ".join(
-                            [
-                                item.text
-                                for item in transcript
-                            ]
-                        )
-                    )
-
-                    save_or_get_video(
-                        request.user,
-                        url,
-                        video_info,
-                        transcript_text
-                    )
-
-                except Exception:
-
-                    summary = """
-
-
-    ⚠️ Transcript unavailable.
-
-    Possible reasons:
-
-    • Captions disabled
-    • Auto captions unavailable
-    • Live stream
-    • Private video
-
-    Try another video.
-    """
-
-
-                    return render(
-                        request,
-                        "chat/youtube.html",
-                        {
-                            "form": form,
-                            "summary": summary,
-                            "video_info": video_info
-                        }
-                    )
-
-            if not question:
-
-                question = (
-                    "Summarize this video"
-                )
-
-            prompt = f"""
-
-
-    You are JARVIS AI.
-
-    Video Title:
-    {video_info['title']}
-
-    Channel:
-    {video_info['channel']}
-
-    Transcript:
-
-    {transcript_text[:8000]}
-
-    User Question:
-
-    {question}
-
-    Answer only using
-    the video content.
-    """
-
-
-            summary = get_ai_response(
-                prompt
+            video_info = get_video_info(
+                url
             )
+
+            video_id = get_video_id(
+                url
+            )
+
+            try:
+
+                ytt_api = (
+                    YouTubeTranscriptApi()
+                )
+
+                transcript = (
+                    ytt_api.fetch(
+                        video_id
+                    )
+                )
+
+                transcript_text = (
+                    " ".join(
+                        [
+                            item.text
+                            for item in transcript
+                        ]
+                    )
+                )
+
+                video = save_or_get_video(
+                    request.user,
+                    url,
+                    video_info,
+                    transcript_text
+                )
+
+                xp, created = UserXP.objects.get_or_create(
+                    user=request.user,
+                    defaults={
+                        "points": 0
+                    }
+                )
+
+                xp.points += 10
+                xp.save()
+
+                return redirect(
+                    "youtube_video_detail",
+                    video.id
+                )
+
+            except Exception:
+
+                return render(
+                    request,
+                    "chat/youtube.html",
+                    {
+                        "form": form,
+                        "summary": """
+
+⚠️ Transcript unavailable.
+
+Possible reasons:
+
+• Captions disabled
+• Auto captions unavailable
+• Live stream
+• Private video
+
+Try another video.
+"""
+                    }
+                )
 
     else:
 
@@ -950,30 +1139,43 @@ def youtube_summarizer(request):
         request,
         "chat/youtube.html",
         {
-            "form": form,
-            "summary": summary,
-            "video_info": video_info
+            "form": form
         }
     )
     
+    
+        
 @login_required
 def youtube_history(request):
 
+    query = request.GET.get(
+        "q",
+        ""
+    )
 
     videos = (
         YouTubeVideo.objects
-        .filter(user=request.user)
+        .filter(
+            user=request.user
+        )
         .order_by("-created_at")
     )
+
+    if query:
+
+        videos = videos.filter(
+            title__icontains=query
+        )
 
     return render(
         request,
         "chat/youtube_history.html",
         {
-            "videos": videos
+            "videos": videos,
+            "query": query,
+            "total_videos": videos.count()
         }
     )
-
 
 
 
@@ -1044,21 +1246,34 @@ def profile(request):
         user=request.user
     ).count()
 
+    video_count = YouTubeVideo.objects.filter(
+        user=request.user
+    ).count()
+
+    website_count = Website.objects.filter(
+        user=request.user
+    ).count()
+
+    xp, created = UserXP.objects.get_or_create(
+        user=request.user
+    )
+
     context = {
 
         "chat_count": chat_count,
         "pdf_count": pdf_count,
         "image_count": image_count,
         "memory_count": memory_count,
-
+        "video_count": video_count,
+        "website_count": website_count,
+        "xp_points": xp.points,
     }
 
     return render(
         request,
         "profile.html",
         context
-    )
-    
+    )    
     
     
 @login_required
@@ -1072,9 +1287,16 @@ def youtube_video_detail(
         id=video_id,
         user=request.user
     )
+    xp, created = UserXP.objects.get_or_create(
+    user=request.user
+)
 
     answer = None
     question = ""
+
+    video_messages = VideoMessage.objects.filter(
+        video=video
+    ).order_by("created_at")
 
     if request.method == "POST":
 
@@ -1083,8 +1305,27 @@ def youtube_video_detail(
             ""
         )
 
+        history = ""
+
+        recent_messages = VideoMessage.objects.filter(
+            video=video
+        ).order_by("-created_at")[:10]
+
+        for msg in reversed(
+            recent_messages
+        ):
+
+            history += (
+                f"{msg.role}: "
+                f"{msg.content}\n"
+            )
+
         prompt = f"""
 You are JARVIS AI.
+
+Previous Conversation:
+
+{history}
 
 Video Title:
 {video.title}
@@ -1096,17 +1337,42 @@ Transcript:
 
 {video.transcript[:8000]}
 
-User Question:
+Current Question:
 
 {question}
 
-Answer only using
-the video content.
+Use previous conversation
+and video content when relevant.
 """
+
+        VideoMessage.objects.create(
+            video=video,
+            role="user",
+            content=question
+        )
 
         answer = get_ai_response(
             prompt
         )
+        
+        if (
+        "correct" in answer.lower()
+        or "well done" in answer.lower()
+        or "good job" in answer.lower()
+    ):
+
+            xp.points += 10
+            xp.save()
+
+        VideoMessage.objects.create(
+            video=video,
+            role="assistant",
+            content=answer
+        )
+
+        video_messages = VideoMessage.objects.filter(
+            video=video
+        ).order_by("created_at")
 
     return render(
         request,
@@ -1114,28 +1380,431 @@ the video content.
         {
             "video": video,
             "question": question,
-            "answer": answer
+            "answer": answer,
+            "video_messages": video_messages
         }
     )
     
-    
+        
 @login_required
 def pdf_library(request):
 
+    query = request.GET.get(
+        "q",
+        ""
+    )
+
     pdfs = (
         PDFFile.objects
-        .filter(user=request.user)
+        .filter(
+            user=request.user
+        )
         .order_by("-uploaded_at")
     )
+
+    if query:
+
+        pdfs = pdfs.filter(
+            file__icontains=query
+        )
 
     return render(
         request,
         "chat/pdf_library.html",
         {
-            "pdfs": pdfs
+            "pdfs": pdfs,
+            "query": query,
+            "total_pdfs": pdfs.count()
+        }
+    )    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+from django.shortcuts import (
+    render,
+    redirect,
+    get_object_or_404
+)
+
+@login_required
+def image_library(request):
+
+    query = request.GET.get("q", "")
+
+    images = ImageFile.objects.filter(
+        user=request.user
+    )
+
+    if query:
+
+        images = images.filter(
+            image__icontains=query
+        )
+
+    images = images.order_by(
+        "-uploaded_at"
+    )
+
+    return render(
+        request,
+        "chat/image_library.html",
+        {
+            "images": images,
+            "query": query,
+            "total_images": images.count()
+        }
+    )
+
+
+@login_required
+def delete_image(
+    request,
+    image_id
+):
+
+    image = get_object_or_404(
+        ImageFile,
+        id=image_id,
+        user=request.user
+    )
+
+    if image.image:
+        image.image.delete(
+            save=False
+        )
+
+    image.delete()
+
+    return redirect(
+        "image_library"
+    )    
+    
+    
+    
+@login_required
+def website_library(request):
+
+    query = request.GET.get(
+        "q",
+        ""
+    )
+
+    websites = Website.objects.filter(
+        user=request.user
+    )
+
+    if query:
+
+        websites = websites.filter(
+            title__icontains=query
+        )
+
+    websites = websites.order_by(
+        "-created_at"
+    )
+
+    return render(
+        request,
+        "chat/website_library.html",
+        {
+            "websites": websites,
+            "query": query,
+            "total_websites":
+            websites.count()
         }
     )
     
     
+@login_required
+def delete_pdf(
+    request,
+    pdf_id
+):
+
+    pdf = get_object_or_404(
+        PDFFile,
+        id=pdf_id,
+        user=request.user
+    )
+
+    if request.method == "POST":
+
+        pdf.delete()
+
+    return redirect(
+        "pdf_library"
+    )
 
 
+@login_required
+def delete_video(
+    request,
+    video_id
+):
+
+    video = get_object_or_404(
+        YouTubeVideo,
+        id=video_id,
+        user=request.user
+    )
+
+    if request.method == "POST":
+
+        video.delete()
+
+    return redirect(
+        "youtube_history"
+    )
+
+
+
+
+@login_required
+def delete_website(
+    request,
+    website_id
+):
+
+    website = get_object_or_404(
+        Website,
+        id=website_id,
+        user=request.user
+    )
+
+    if request.method == "POST":
+
+        website.delete()
+
+    return redirect(
+        "website_library"
+    )
+
+
+@login_required
+def website_detail(
+    request,
+    website_id
+):
+
+    website = Website.objects.get(
+        id=website_id,
+        user=request.user
+    )
+
+    website_messages = (
+        WebsiteMessage.objects.filter(
+            website=website
+        )
+        .order_by("created_at")
+    )
+
+    if request.method == "POST":
+
+        question = request.POST.get(
+            "question",
+            ""
+        )
+
+        WebsiteMessage.objects.create(
+            website=website,
+            role="user",
+            content=question
+        )
+
+        history = ""
+
+        recent_messages = (
+            WebsiteMessage.objects
+            .filter(
+                website=website
+            )
+            .order_by("-created_at")[:10]
+        )
+
+        for msg in reversed(
+            recent_messages
+        ):
+
+            history += (
+                f"{msg.role}: "
+                f"{msg.content}\n"
+            )
+
+        prompt = f"""
+
+You are JARVIS AI.
+
+Website Title:
+
+{website.title}
+
+Website Content:
+
+{website.content[:8000]}
+
+Previous Conversation:
+
+{history}
+
+Current Question:
+
+{question}
+
+Use the website content
+and previous conversation
+when relevant.
+"""
+
+        answer = get_ai_response(
+            prompt
+        )
+
+        WebsiteMessage.objects.create(
+            website=website,
+            role="assistant",
+            content=answer
+        )
+
+        return redirect(
+            "website_detail",
+            website.id
+        )
+
+    return render(
+        request,
+        "chat/website_detail.html",
+        {
+            "website": website,
+            "website_messages":
+            website_messages
+        }
+    )
+    
+@login_required
+def toggle_favorite(request, chat_id):
+
+    chat = get_object_or_404(
+        ChatSession,
+        id=chat_id,
+        user=request.user
+    )
+
+    chat.is_favorite = (
+        not chat.is_favorite
+    )
+
+    chat.save()
+
+    return redirect("chat_home")
+
+
+@login_required
+def toggle_pin(request, chat_id):
+
+    chat = get_object_or_404(
+        ChatSession,
+        id=chat_id,
+        user=request.user
+    )
+
+    chat.is_pinned = (
+        not chat.is_pinned
+    )
+
+    chat.save()
+
+    return redirect("chat_home")
+
+
+
+
+@login_required
+def export_chat_pdf(
+    request,
+    chat_id
+):
+
+    chat = get_object_or_404(
+        ChatSession,
+        id=chat_id,
+        user=request.user
+    )
+
+    messages = Message.objects.filter(
+        chat=chat
+    ).order_by(
+        "created_at"
+    )
+
+    response = HttpResponse(
+        content_type="application/pdf"
+    )
+
+    response[
+        "Content-Disposition"
+    ] = (
+        f'attachment; '
+        f'filename="{chat.title}.pdf"'
+    )
+
+    pdf = SimpleDocTemplate(
+        response
+    )
+
+    styles = getSampleStyleSheet()
+
+    elements = []
+
+    elements.append(
+        Paragraph(
+            f"JARVIS AI Chat Export",
+            styles["Title"]
+        )
+    )
+
+    elements.append(
+        Paragraph(
+            chat.title,
+            styles["Heading2"]
+        )
+    )
+
+    elements.append(
+        Spacer(1, 20)
+    )
+
+    for msg in messages:
+
+        role = (
+            "👤 User"
+            if msg.role == "user"
+            else "🤖 JARVIS"
+        )
+
+        text = (
+            f"<b>{role}</b><br/>"
+            f"{msg.content}"
+        )
+
+        elements.append(
+            Paragraph(
+                text,
+                styles["BodyText"]
+            )
+        )
+
+        elements.append(
+            Spacer(1, 10)
+        )
+
+    pdf.build(
+        elements
+    )
+
+    return response

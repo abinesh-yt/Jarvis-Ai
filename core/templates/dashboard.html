@@ -4,19 +4,16 @@
 
 <div class="page-header">
 
+    <h1>
+        Welcome Back, {{ user.username }} 👋
+    </h1>
 
-
-
-<h1>
-    Welcome Back, {{ user.username }} 👋
-</h1>
-
-<p>
-    Access all your AI tools, memories, chats, documents and insights from one place.
-</p>
-
+    <p>
+        Access all your AI tools, memories, chats, documents and insights from one place.
+    </p>
 
 </div>
+
 <div class="hero-card">
 
     <div>
@@ -26,7 +23,7 @@
         </h1>
 
         <p>
-            Your personal AI workspace 
+            Your personal AI workspace
         </p>
 
         <p>
@@ -38,249 +35,240 @@
     <div class="hero-buttons">
 
         <a href="/chat/" class="hero-btn">
-
             💬 New Chat
-
         </a>
 
         <a href="{% url 'upload_pdf' %}" class="hero-btn">
-
             📄 Upload PDF
+        </a>
 
+        <a href="{% url 'upload_image' %}" class="hero-btn">
+            🖼 Upload Image
         </a>
 
     </div>
 
 </div>
 
+
+<div class="dashboard-hero-xp">
+
+    <h2>
+        ⭐ Level {{ level }}
+    </h2>
+
+    <p>
+        XP: {{ xp_points }}
+    </p>
+
+    {% if level < 5 %}
+    <p>
+        Next Level: {{ next_level_xp }} XP
+    </p>
+    {% else %}
+    <p>
+        Max Level Reached 🚀
+    </p>
+    {% endif %}
+
+    <div class="xp-bar">
+
+        <div
+            class="xp-fill"
+            style="width:{{ progress_percent }}%;"
+        ></div>
+
+    </div>
+
+    <p>
+        {{ progress_percent }}% Complete
+    </p>
+
+    <br>
+
+    <p>
+        🔥 Most Used Tool:
+        <strong>{{ most_used_tool }}</strong>
+    </p>
+
+</div>
+
+
 <div class="stats-grid">
 
+    <div class="stat-card">
+        <h2>{{ total_messages }}</h2>
+        <p>📈 Messages</p>
+    </div>
 
-<div class="stat-card">
+    <div class="stat-card">
+        <h2>{{ chat_count }}</h2>
+        <p>💬 Chats</p>
+    </div>
 
-    <h2>{{ chat_count }}</h2>
+    <div class="stat-card">
+        <h2>{{ pdf_count }}</h2>
+        <p>📄 PDFs</p>
+    </div>
 
-    <p>💬 Chats</p>
-
-</div>
-
-<div class="stat-card">
-
-    <h2>{{ pdf_count }}</h2>
-
-    <p>📄 PDFs</p>
-
-</div>
-
-<div class="stat-card">
-
-    <h2>{{ image_count }}</h2>
-
-    <p>🖼️ Images</p>
+    <div class="stat-card">
+        <h2>{{ xp_points }}</h2>
+        <p>🏆 XP</p>
+    </div>
 
 </div>
 
-<div class="stat-card">
-
-    <h2>{{ memory_count }}</h2>
-
-    <p>🧠 Memories</p>
-
-</div>
-
-
-</div>
 
 <div class="dashboard-row">
 
     <div class="dashboard-section">
 
+        <h2>💬 Recent Chats</h2>
 
-<h2>⚡ Recent Activity</h2>
+        <div class="activity-list">
 
-<div class="activity-list">
+            {% for chat in recent_chats %}
 
-    {% for chat in recent_chats %}
+            <a
+                href="/chat/{{ chat.id }}/"
+                class="activity-card"
+            >
+                💬 {{ chat.title }}
+            </a>
 
-        <a
-            href="/chat/{{ chat.id }}/"
-            class="activity-card"
-        >
+            {% empty %}
 
-            💬 {{ chat.title }}
+            <div class="activity-card">
+                No recent chats
+            </div>
 
-        </a>
-
-    {% empty %}
-
-        <div class="activity-card">
-
-            No recent chats
+            {% endfor %}
 
         </div>
 
-    {% endfor %}
-
-</div>
-
-
-</div>
+    </div>
 
     <div class="dashboard-section">
 
+        <h2>📄 Recent PDFs</h2>
 
-<h2>📄 Recent PDFs</h2>
+        <div class="activity-list">
 
-<div class="activity-list">
+            {% for pdf in recent_pdfs %}
 
-    {% for pdf in recent_pdfs %}
+            <a
+                href="{% url 'pdf_detail' pdf.id %}"
+                class="activity-card"
+            >
+                📄 {{ pdf.file.name }}
+            </a>
 
-        <div class="activity-card">
+            {% empty %}
 
-            📄 {{ pdf.file.name }}
+            <div class="activity-card">
+                No PDFs uploaded yet
+            </div>
+
+            {% endfor %}
 
         </div>
 
-    {% empty %}
+    </div>
 
-        <div class="activity-card">
+</div>
 
-            No PDFs uploaded yet
+
+<div class="dashboard-row">
+
+    <div class="dashboard-section">
+
+        <h2>🎥 Recent Videos</h2>
+
+        <div class="activity-list">
+
+            {% for video in recent_videos %}
+
+            <a
+                href="{% url 'youtube_video_detail' video.id %}"
+                class="activity-card"
+            >
+                🎥 {{ video.title }}
+            </a>
+
+            {% empty %}
+
+            <div class="activity-card">
+                No videos yet
+            </div>
+
+            {% endfor %}
 
         </div>
 
-    {% endfor %}
+    </div>
+
+    <div class="dashboard-section">
+
+        <h2>📊 Workspace Analytics</h2>
+
+        <div class="activity-card">
+            🖼 Images: {{ image_count }}
+        </div>
+
+        <br>
+
+        <div class="activity-card">
+            🌐 Websites: {{ website_count }}
+        </div>
+
+        <br>
+
+        <div class="activity-card">
+            🧠 Memories: {{ memory_count }}
+        </div>
+
+    </div>
 
 </div>
-
-
-</div>
-
-</div>
-
-
-
 
 
 <div class="dashboard-section">
 
-
-<h2>🤖 AI Tools</h2>
-
+    <h2>🤖 AI Tools</h2>
 
 </div>
 
 <div class="dashboard-grid">
 
+    <a href="/chat/" class="dashboard-card">
+        <h2>💬 AI Chat</h2>
+        <p>Talk with JARVIS using Groq AI.</p>
+    </a>
 
-<a href="/chat/" class="dashboard-card">
+    <a href="{% url 'upload_pdf' %}" class="dashboard-card">
+        <h2>📄 PDF Assistant</h2>
+        <p>Upload PDFs and ask questions.</p>
+    </a>
 
-    <h2>💬 AI Chat</h2>
+    <a href="{% url 'upload_image' %}" class="dashboard-card">
+        <h2>🖼 Vision AI</h2>
+        <p>Analyze images instantly.</p>
+    </a>
 
-    <p>
-        Talk with JARVIS using Groq AI, voice input and voice output.
-    </p>
+    <a href="{% url 'website_summarizer' %}" class="dashboard-card">
+        <h2>🌐 Website AI</h2>
+        <p>Summarize websites with AI.</p>
+    </a>
 
-    <div class="feature-tags">
+    <a href="{% url 'youtube_summarizer' %}" class="dashboard-card">
+        <h2>🎥 YouTube AI</h2>
+        <p>Summarize YouTube videos.</p>
+    </a>
 
-        <span>Chat</span>
-        <span>Voice</span>
-
-    </div>
-
-</a>
-
-
-<a href="{% url 'upload_pdf' %}" class="dashboard-card">
-
-    <h2>📄 PDF Assistant</h2>
-
-    <p>
-        Upload PDFs, summarize documents and ask questions.
-    </p>
-
-    <div class="feature-tags">
-
-        <span>PDF</span>
-        <span>Q&A</span>
-
-    </div>
-
-</a>
-
-
-<a href="{% url 'upload_image' %}" class="dashboard-card">
-
-    <h2>🖼️ Vision AI</h2>
-
-    <p>
-        Analyze images and ask questions about visual content.
-    </p>
-
-    <div class="feature-tags">
-
-        <span>Vision</span>
-        <span>Gemini</span>
-
-    </div>
-
-</a>
-
-
-<a href="{% url 'website_summarizer' %}" class="dashboard-card">
-
-    <h2>🌐 Website AI</h2>
-
-    <p>
-        Summarize websites instantly using artificial intelligence.
-    </p>
-
-    <div class="feature-tags">
-
-        <span>Web</span>
-        <span>Summary</span>
-
-    </div>
-
-</a>
-
-
-<a href="{% url 'youtube_summarizer' %}" class="dashboard-card">
-
-    <h2>🎥 YouTube AI</h2>
-
-    <p>
-        Summarize YouTube videos without watching the entire video.
-    </p>
-
-    <div class="feature-tags">
-
-        <span>YouTube</span>
-        <span>Summary</span>
-
-    </div>
-
-</a>
-
-
-<a href="{% url 'memories' %}" class="dashboard-card">
-
-    <h2>🧠 Memory AI</h2>
-
-    <p>
-        Let JARVIS remember information and recall it whenever needed.
-    </p>
-
-    <div class="feature-tags">
-
-        <span>Memory</span>
-        <span>Personal AI</span>
-
-    </div>
-
-</a>
-
+    <a href="{% url 'memories' %}" class="dashboard-card">
+        <h2>🧠 Memory AI</h2>
+        <p>Store and recall memories.</p>
+    </a>
 
 </div>
-
 {% endblock %}

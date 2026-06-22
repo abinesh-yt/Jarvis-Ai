@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <h1>🖼 Vision Library</h1>
+
+    <p>
+        Manage all your uploaded images in one place.
+    </p>
+
+</div>
+
+<div class="dashboard-grid">
+
+    <div class="dashboard-card">
+        🖼 {{ total_images }} Images
+    </div>
+
+    <div class="dashboard-card">
+        🤖 Vision AI Ready
+    </div>
+
+</div>
+
+<div class="upload-card">
+
+    <form
+        method="GET"
+        style="
+        display:flex;
+        gap:10px;
+        align-items:center;
+        "
+    >
+
+        <input
+            type="text"
+            name="q"
+            value="{{ query }}"
+            placeholder="🔍 Search images..."
+            style="
+            flex:1;
+            "
+        >
+
+        <button type="submit">
+            Search
+        </button>
+
+    </form>
+
+    <br>
+
+    <a
+        href="{% url 'upload_image' %}"
+        class="new-chat-btn"
+    >
+        ➕ Upload New Image
+    </a>
+
+</div>
+
+<div class="section-title">
+
+    <h2>
+
+        🖼 Your Images
+        ({{ total_images }})
+
+    </h2>
+
+</div>
+
+<div class="memory-grid">
+
+{% for image in images %}
+
+<div class="memory-card">
+
+    <img
+        src="{{ image.image.url }}"
+        alt="Image"
+        class="vision-preview"
+    >
+
+    <h3
+        style="
+        margin-top:15px;
+        "
+    >
+        {{ image.image.name|cut:"images/"|truncatechars:25 }}
+    </h3>
+
+    <p
+        style="
+        opacity:.7;
+        font-size:14px;
+        "
+    >
+        Uploaded:
+        {{ image.uploaded_at|date:"d M Y, H:i" }}
+    </p>
+
+    <div
+        style="
+        display:flex;
+        flex-direction:column;
+        gap:10px;
+        margin-top:15px;
+        "
+    >
+
+        <a
+            href="{% url 'image_detail' image.id %}"
+            class="new-chat-btn"
+        >
+            💬 Continue Chat
+        </a>
+
+
+
+        <a
+    href="{% url 'delete_image' image.id %}"
+    class="delete-btn"
+    onclick="
+    return confirm(
+    'This image will be permanently deleted.'
+    )
+    "
+>
+    🗑 Delete
+</a>
+
+
+    </div>
+
+</div>
+
+{% empty %}
+
+<div class="empty-card">
+
+    <h3>
+        📂 No Images Yet
+    </h3>
+
+    <p>
+        Upload your first image and start using Vision AI.
+    </p>
+
+    <br>
+
+    <a
+        href="{% url 'upload_image' %}"
+        class="new-chat-btn"
+    >
+        🚀 Upload Image
+    </a>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+{% endblock %}

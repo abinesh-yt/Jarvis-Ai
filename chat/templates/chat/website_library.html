@@ -4,13 +4,11 @@
 
 <div class="page-header">
 
-    <h1>📄 PDF Library</h1>
+    <h1>🌐 Website Library</h1>
 
     <p>
-
-        Total PDFs:
-        {{ total_pdfs }}
-
+        Total Websites:
+        {{ total_websites }}
     </p>
 
 </div>
@@ -23,13 +21,11 @@
             type="text"
             name="q"
             value="{{ query }}"
-            placeholder="Search PDFs..."
+            placeholder="Search websites..."
         >
 
         <button type="submit">
-
             🔍 Search
-
         </button>
 
     </form>
@@ -38,7 +34,7 @@
 
 <div class="memory-grid">
 
-{% for pdf in pdfs %}
+{% for website in websites %}
 
 <div class="memory-card">
 
@@ -48,14 +44,24 @@
         margin-bottom:15px;
         "
     >
-        📄
+        🌐
     </div>
 
     <h3>
 
-        {{ pdf.file.name }}
+        {{ website.title|truncatechars:40 }}
 
     </h3>
+
+    <p
+        style="
+        opacity:.8;
+        "
+    >
+
+        {{ website.url|truncatechars:50 }}
+
+    </p>
 
     <br>
 
@@ -69,32 +75,32 @@
     >
 
         <a
-            href="{% url 'pdf_detail' pdf.id %}"
+            href="{% url 'website_detail' website.id %}"
             class="new-chat-btn"
         >
             💬 Chat
         </a>
 
         <form
-    method="POST"
-    action="{% url 'delete_pdf' pdf.id %}"
->
+            method="POST"
+            action="{% url 'delete_website' website.id %}"
+        >
 
-    {% csrf_token %}
+            {% csrf_token %}
 
-    <button
-        type="submit"
-        class="delete-btn"
-        onclick="
-        return confirm(
-            'Delete this PDF?'
-        )
-        "
-    >
-        🗑 Delete
-    </button>
+            <button
+                type="submit"
+                class="delete-btn"
+                onclick="
+                return confirm(
+                'Delete this website?'
+                )
+                "
+            >
+                🗑 Delete
+            </button>
 
-</form>
+        </form>
 
     </div>
 
@@ -106,14 +112,14 @@
 
     <h3>
 
-        No PDFs Found
+        No Websites Found
 
     </h3>
 
     <p>
 
-        Upload PDFs to see
-        them here.
+        Analyze websites and
+        they will appear here.
 
     </p>
 

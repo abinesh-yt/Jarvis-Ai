@@ -19,53 +19,290 @@
     <img
         src="{{ video.thumbnail }}"
         class="vision-preview"
+        alt="Thumbnail"
     >
 
     {% endif %}
 
 </div>
 
-<div class="upload-card">
+<div class="yt-tools-grid">
 
-<form method="POST">
+    <div class="yt-tool-card yt-prompt"
+        data-prompt="Summarize this video">
 
-    {% csrf_token %}
+        <div class="yt-tool-icon">
+            📄
+        </div>
 
-    <textarea
-        name="question"
-        placeholder="Ask anything about this video..."
-        rows="5"
-        required
-    >{{ question }}</textarea>
+        <h3>Summary</h3>
 
-    <br><br>
+        <p>
+            Get a complete summary
+            of the video.
+        </p>
 
-    <button type="submit">
+    </div>
 
-        🚀 Ask JARVIS
+    <div class="yt-tool-card yt-prompt"
+        data-prompt="Explain this video simply">
 
-    </button>
+        <div class="yt-tool-icon">
+            🧠
+        </div>
 
-</form>
+        <h3>Explain</h3>
 
-</div>
+        <p>
+            Explain everything in
+            simple language.
+        </p>
 
-{% if answer %}
+    </div>
 
-<div class="result-card">
+    <div class="yt-tool-card yt-prompt"
+        data-prompt="What are the key points?">
 
-    <h2>
-        🤖 JARVIS Response
-    </h2>
+        <div class="yt-tool-icon">
+            🎯
+        </div>
 
-    <div class="result-content">
+        <h3>Key Points</h3>
 
-        {{ answer }}
+        <p>
+            Extract the most
+            important concepts.
+        </p>
+
+    </div>
+
+    <div class="yt-tool-card yt-prompt"
+        data-prompt="Create quiz questions from this video">
+
+        <div class="yt-tool-icon">
+            ❓
+        </div>
+
+        <h3>Quiz</h3>
+
+        <p>
+            Generate quiz questions.
+        </p>
+
+    </div>
+
+    <div class="yt-tool-card yt-prompt"
+        data-prompt="Create flashcards from this video">
+
+        <div class="yt-tool-icon">
+            🃏
+        </div>
+
+        <h3>Flashcards</h3>
+
+        <p>
+            Generate learning cards.
+        </p>
+
+    </div>
+
+    <div class="yt-tool-card yt-prompt"
+        data-prompt="Create MCQs from this video">
+
+        <div class="yt-tool-icon">
+            🎓
+        </div>
+
+        <h3>MCQ Test</h3>
+
+        <p>
+            Test your knowledge.
+        </p>
+
+    </div>
+
+    <div class="yt-tool-card yt-prompt"
+        data-prompt="Generate interview questions from this video">
+
+        <div class="yt-tool-icon">
+            💼
+        </div>
+
+        <h3>Interview Prep</h3>
+
+        <p>
+            Prepare for interviews.
+        </p>
+
+    </div>
+
+    <div class="yt-tool-card yt-prompt"
+        data-prompt="Create a one page cheat sheet from this video">
+
+        <div class="yt-tool-icon">
+            📖
+        </div>
+
+        <h3>Cheat Sheet</h3>
+
+        <p>
+            Quick revision notes.
+        </p>
 
     </div>
 
 </div>
+{% if video_messages %}
+
+<div class="result-card">
+
+    <h2>
+        💬 Video Conversation
+    </h2>
+
+    {% for msg in video_messages %}
+
+        {% if msg.role == "user" %}
+
+        <div
+            style="
+            display:flex;
+            justify-content:flex-end;
+            margin-bottom:20px;
+            "
+        >
+
+            <div
+                style="
+                max-width:70%;
+                padding:15px;
+                border-radius:18px;
+                background:#2563eb;
+                color:white;
+                "
+            >
+
+                <div
+                    style="
+                    white-space:pre-wrap;
+                    line-height:1.8;
+                    "
+                >
+                    {{ msg.content }}
+                </div>
+
+            </div>
+
+        </div>
+
+        {% else %}
+
+        <div
+            style="
+            display:flex;
+            justify-content:flex-start;
+            margin-bottom:20px;
+            "
+        >
+
+            <div
+                style="
+                max-width:85%;
+                padding:18px;
+                border-radius:18px;
+                background:#1e293b;
+                color:white;
+                "
+            >
+
+                <div
+                    style="
+                    white-space:pre-wrap;
+                    line-height:1.9;
+                    "
+                >
+                    {{ msg.content }}
+                </div>
+
+            </div>
+
+        </div>
+
+        {% endif %}
+
+    {% endfor %}
+
+</div>
 
 {% endif %}
+
+<div class="upload-card">
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <textarea
+            id="youtube-question"
+            name="question"
+            placeholder="Ask anything about this video..."
+            rows="5"
+            style="
+            width:100%;
+            padding:18px;
+            border-radius:12px;
+            resize:none;
+            "
+            required
+        ></textarea>
+
+        <br><br>
+
+        <button type="submit">
+
+            🚀 Ask JARVIS
+
+        </button>
+
+    </form>
+
+</div>
+
+<script>
+
+const promptCards =
+document.querySelectorAll(".yt-prompt");
+
+const questionBox =
+document.getElementById(
+    "youtube-question"
+);
+
+promptCards.forEach(card => {
+
+    card.addEventListener(
+        "click",
+        () => {
+
+            questionBox.value =
+                card.dataset.prompt;
+
+            questionBox.focus();
+
+        }
+    );
+
+});
+
+window.onload = function() {
+
+    window.scrollTo(
+        0,
+        document.body.scrollHeight
+    );
+
+};
+
+</script>
 
 {% endblock %}

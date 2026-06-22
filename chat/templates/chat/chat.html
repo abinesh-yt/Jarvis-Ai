@@ -1,40 +1,135 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
 {% block content %}
 
 <div class="page-header">
 
+    <h1>💬 JARVIS Chats</h1>
 
-<h1>💬 JARVIS Chats</h1>
-
-<p>
-    Continue previous conversations or start a new one.
-</p>
-
+    <p>
+        Continue previous conversations or start a new one.
+    </p>
 
 </div>
 
+<div class="dashboard-grid">
+
+    <div class="dashboard-card">
+        💬 {{ total_chats }} Chats
+    </div>
+
+    <div class="dashboard-card">
+        🤖 JARVIS Ready
+    </div>
+
+</div>
+
+<br>
+
 <a
-href="/chat/new/"
-class="new-chat-btn"
-
+    href="{% url 'new_chat' %}"
+    class="new-chat-btn"
 >
-
-
-➕ New Chat
-
-
+    ➕ New Chat
 </a>
 
-<div class="search-container">
+<br><br>
 
+<div class="upload-card">
 
-<input
-    type="text"
-    id="chat-search"
-    placeholder="🔍 Search chats..."
->
+    <input
+        type="text"
+        id="chat-search"
+        placeholder="🔍 Search chats..."
+    >
 
+</div>
+
+<br>
+
+{% if pinned_chats %}
+
+<div class="section-title">
+
+    <h2>📌 Pinned Chats</h2>
+
+</div>
+
+<div class="chat-grid">
+
+{% for chat in pinned_chats %}
+
+<div class="chat-wrapper">
+
+    <a
+        href="{% url 'chat_detail' chat.id %}"
+        class="chat-card"
+        data-title="{{ chat.title|lower }}"
+    >
+
+        <div class="chat-icon">
+            📌
+        </div>
+
+        <div class="chat-title">
+            {{ chat.title|truncatechars:35 }}
+        </div>
+
+    </a>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+<br>
+
+{% endif %}
+
+{% if favorite_chats %}
+
+<div class="section-title">
+
+    <h2>⭐ Favorite Chats</h2>
+
+</div>
+
+<div class="chat-grid">
+
+{% for chat in favorite_chats %}
+
+<div class="chat-wrapper">
+
+    <a
+        href="{% url 'chat_detail' chat.id %}"
+        class="chat-card"
+        data-title="{{ chat.title|lower }}"
+    >
+
+        <div class="chat-icon">
+            ⭐
+        </div>
+
+        <div class="chat-title">
+            {{ chat.title|truncatechars:35 }}
+        </div>
+
+    </a>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+<br>
+
+{% endif %}
+
+<div class="section-title">
+
+    <h2>💬 All Chats</h2>
 
 </div>
 
@@ -44,37 +139,64 @@ class="new-chat-btn"
 
 <div class="chat-wrapper">
 
+    <a
+        href="{% url 'chat_detail' chat.id %}"
+        class="chat-card"
+        data-title="{{ chat.title|lower }}"
+    >
 
-<a
-    href="/chat/{{ chat.id }}/"
-    class="chat-card"
-    data-title="{{ chat.title|lower }}"
->
+        <div class="chat-icon">
 
-    <div class="chat-icon">
-        💬
-    </div>
+            {% if chat.is_pinned %}
+                📌
+            {% elif chat.is_favorite %}
+                ⭐
+            {% else %}
+                💬
+            {% endif %}
 
-    <div class="chat-title">
-        {{ chat.title }}
-    </div>
+        </div>
 
-</a>
-<a
-    href="{% url 'rename_chat' chat.id %}"
-    class="rename-btn"
->
-    ✏️
-</a>
+        <div class="chat-title">
+            {{ chat.title|truncatechars:35 }}
+        </div>
 
-<a
-    href="{% url 'delete_chat' chat.id %}"
-    class="delete-btn"
-    onclick="return confirm('Delete this chat?')"
->
-    🗑️
-</a>
+    </a>
 
+    <a
+        href="{% url 'toggle_pin' chat.id %}"
+        class="rename-btn"
+        title="Pin Chat"
+    >
+        📌
+    </a>
+
+    <a
+        href="{% url 'toggle_favorite' chat.id %}"
+        class="rename-btn"
+        style="right:55px;"
+        title="Favorite Chat"
+    >
+        ⭐
+    </a>
+
+    <a
+        href="{% url 'rename_chat' chat.id %}"
+        class="rename-btn"
+        style="right:95px;"
+        title="Rename Chat"
+    >
+        ✏️
+    </a>
+
+    <a
+        href="{% url 'delete_chat' chat.id %}"
+        class="delete-btn"
+        title="Delete Chat"
+        onclick="return confirm('Delete this chat permanently?')"
+    >
+        🗑️
+    </a>
 
 </div>
 
@@ -82,9 +204,22 @@ class="new-chat-btn"
 
 <div class="empty-card">
 
+    <h3>
+        🤖 No Chats Yet
+    </h3>
 
-No chats yet 🤖
+    <p>
+        Start your first conversation with JARVIS.
+    </p>
 
+    <br>
+
+    <a
+        href="{% url 'new_chat' %}"
+        class="new-chat-btn"
+    >
+        🚀 Start Chatting
+    </a>
 
 </div>
 
@@ -95,10 +230,14 @@ No chats yet 🤖
 <script>
 
 const searchInput =
-    document.getElementById("chat-search");
+document.getElementById(
+    "chat-search"
+);
 
 const chatCards =
-    document.querySelectorAll(".chat-card");
+document.querySelectorAll(
+    ".chat-card"
+);
 
 if(searchInput){
 
@@ -112,10 +251,11 @@ if(searchInput){
             chatCards.forEach(card => {
 
                 const title =
-                    (card.dataset.title || "")
-                    .toLowerCase();
+                    card.dataset.title || "";
 
-                if(title.includes(value)){
+                if(
+                    title.includes(value)
+                ){
 
                     card.parentElement.style.display =
                         "block";
