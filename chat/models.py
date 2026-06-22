@@ -198,10 +198,25 @@ class UserXP(models.Model):
         default=0
     )
 
+    streak = models.IntegerField(
+        default=0
+    )
+
+    best_streak = models.IntegerField(
+        default=0
+    )
+
+    last_login_date = models.DateField(
+        null=True,
+        blank=True
+    )
+
     def __str__(self):
 
-        return f"{self.user.username} - {self.points}"
-    
+        return (
+            f"{self.user.username} - "
+            f"{self.points} XP"
+        )    
     
 
 

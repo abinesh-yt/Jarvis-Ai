@@ -122,16 +122,16 @@
 
 
         <a
-    href="{% url 'delete_image' image.id %}"
-    class="delete-btn"
-    onclick="
-    return confirm(
-    'This image will be permanently deleted.'
-    )
-    "
->
-    🗑 Delete
-</a>
+        href="{% url 'delete_image' image.id %}"
+        class="image-delete-btn"
+        onclick="
+        return confirm(
+        'This image will be permanently deleted.'
+        )
+        "
+    >
+        🗑 Delete
+    </a>
 
 
     </div>

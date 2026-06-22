@@ -1474,17 +1474,22 @@ def delete_image(
         user=request.user
     )
 
-    if image.image:
-        image.image.delete(
-            save=False
-        )
+    try:
+
+        if image.image:
+            image.image.delete(
+                save=False
+            )
+
+    except Exception:
+
+        pass
 
     image.delete()
 
     return redirect(
         "image_library"
     )    
-    
     
     
 @login_required

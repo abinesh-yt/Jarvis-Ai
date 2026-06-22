@@ -4,6 +4,8 @@ from django.contrib.auth import authenticate, login, logout
 
 from chat.models import UserXP
 
+from datetime import date, timedelta
+
 
 def register(request):
 
@@ -29,7 +31,9 @@ def register(request):
 
             UserXP.objects.create(
                 user=user,
-                points=0
+                points=0,
+                streak=0,
+                best_streak=0
             )
 
             return redirect(
@@ -62,12 +66,47 @@ def login_view(request):
 
         if user is not None:
 
-            UserXP.objects.get_or_create(
+            xp, created = UserXP.objects.get_or_create(
                 user=user,
                 defaults={
-                    "points": 0
+                    "points": 0,
+                    "streak": 0,
+                    "best_streak": 0
                 }
             )
+
+            today = date.today()
+
+            if xp.last_login_date:
+
+                if xp.last_login_date == today:
+
+                    pass
+
+                elif xp.last_login_date == (
+                    today - timedelta(days=1)
+                ):
+
+                    xp.streak += 1
+                    xp.points += 10
+
+                else:
+
+                    xp.streak = 1
+                    xp.points += 10
+
+            else:
+
+                xp.streak = 1
+                xp.points += 10
+
+            if xp.streak > xp.best_streak:
+
+                xp.best_streak = xp.streak
+
+            xp.last_login_date = today
+
+            xp.save()
 
             login(request, user)
 

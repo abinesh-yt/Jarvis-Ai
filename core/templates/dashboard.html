@@ -50,24 +50,40 @@
 
 </div>
 
-
 <div class="dashboard-hero-xp">
 
-    <h2>
-        ⭐ Level {{ level }}
-    </h2>
+    <h2>{{ rank }}</h2>
+
+    <p><div class="level-display">
+
+    {{ level }}
+
+</div>
+
+<p>
+    ⭐ Current Level
+</p></p>
+
+    <p>🏆 XP: {{ xp_points }}</p>
 
     <p>
-        XP: {{ xp_points }}
+        🔥 Current Streak:
+        {{ current_streak }}
+    </p>
+
+    <p>
+        🏅 Best Streak:
+        {{ best_streak }}
     </p>
 
     {% if level < 5 %}
     <p>
-        Next Level: {{ next_level_xp }} XP
+        Next Level:
+        {{ next_level_xp }} XP
     </p>
     {% else %}
     <p>
-        Max Level Reached 🚀
+        👑 Max Level Reached
     </p>
     {% endif %}
 
@@ -86,12 +102,133 @@
 
     <br>
 
-    <p>
+    <div class="activity-card">
+
+        🎁 Daily Login Reward
+
+        <br><br>
+
+        +10 XP every day
+
+    </div>
+
+    <br>
+
+    <div class="activity-card">
+
         🔥 Most Used Tool:
-        <strong>{{ most_used_tool }}</strong>
-    </p>
+        <strong>
+            {{ most_used_tool }}
+        </strong>
+
+    </div>
+
+    <div
+    id="jarvis-data"
+    data-xp="{{ xp_points }}"
+    data-level="{{ level }}"
+    data-mission="{% if mission_completed %}3/3 Complete{% else %}In Progress{% endif %}"
+    style="display:none;"
+></div>
 
 </div>
+
+<div class="dashboard-section">
+
+    <h2>
+        🎯 Today's Mission
+    </h2>
+
+    <div class="activity-card">
+
+        <p>
+            {% if mission_chat_done %}
+            ✅ Send 5 Messages
+            {% else %}
+            ⬜ Send 5 Messages
+            {% endif %}
+        </p>
+
+        <p>
+            {% if mission_memory_done %}
+            ✅ Save 1 Memory
+            {% else %}
+            ⬜ Save 1 Memory
+            {% endif %}
+        </p>
+
+        <p>
+            {% if mission_pdf_done %}
+            ✅ Upload 1 PDF
+            {% else %}
+            ⬜ Upload 1 PDF
+            {% endif %}
+        </p>
+
+        <div class="mission-bar">
+
+    <div
+        class="mission-fill"
+        style="width:100%;"
+    ></div>
+
+</div>
+
+        <hr>
+
+        {% if mission_completed %}
+
+        <div class="mission-complete">
+
+    🏆 Mission Complete
+
+</div>
+
+        <p>
+            Reward Ready!
+        </p>
+
+        {% else %}
+
+        <p>
+            Reward: +20 XP
+        </p>
+
+        {% endif %}
+
+    </div>
+
+</div>
+<div class="dashboard-section">
+
+    <h2>
+        🏆 Achievements
+    </h2>
+
+    <div class="achievement-badges">
+
+        {% for achievement in achievements %}
+
+        <div class="achievement-badge">
+
+            {{ achievement }}
+
+        </div>
+
+        {% empty %}
+
+        <div class="achievement-badge">
+
+            🚀 No Achievements Yet
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
 
 
 <div class="stats-grid">
@@ -109,6 +246,26 @@
     <div class="stat-card">
         <h2>{{ pdf_count }}</h2>
         <p>📄 PDFs</p>
+    </div>
+
+    <div class="stat-card">
+        <h2>{{ image_count }}</h2>
+        <p>🖼 Images</p>
+    </div>
+
+    <div class="stat-card">
+        <h2>{{ website_count }}</h2>
+        <p>🌐 Websites</p>
+    </div>
+
+    <div class="stat-card">
+        <h2>{{ video_count }}</h2>
+        <p>🎥 Videos</p>
+    </div>
+
+    <div class="stat-card">
+        <h2>{{ memory_count }}</h2>
+        <p>🧠 Memories</p>
     </div>
 
     <div class="stat-card">

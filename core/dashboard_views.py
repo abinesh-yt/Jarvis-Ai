@@ -47,39 +47,56 @@ def dashboard(request):
     xp, created = UserXP.objects.get_or_create(
         user=request.user,
         defaults={
-            "points": 0
+            "points": 0,
+            "streak": 0,
+            "best_streak": 0
         }
     )
 
     xp_points = xp.points
 
+    current_streak = xp.streak
+    best_streak = xp.best_streak
+
+    # LEVEL SYSTEM
+
     if xp_points < 100:
 
         level = 1
+        rank = "🥉 Bronze AI User"
+
         next_level_xp = 100
         current_level_start = 0
 
     elif xp_points < 250:
 
         level = 2
+        rank = "🥈 Silver AI User"
+
         next_level_xp = 250
         current_level_start = 100
 
     elif xp_points < 500:
 
         level = 3
+        rank = "🥇 Gold AI User"
+
         next_level_xp = 500
         current_level_start = 250
 
     elif xp_points < 1000:
 
         level = 4
+        rank = "💎 Diamond AI User"
+
         next_level_xp = 1000
         current_level_start = 500
 
     else:
 
         level = 5
+        rank = "👑 AI Master"
+
         next_level_xp = xp_points
         current_level_start = 1000
 
@@ -100,6 +117,39 @@ def dashboard(request):
 
         progress_percent = 100
 
+    # ACHIEVEMENTS
+
+    achievements = []
+
+    if chat_count >= 1:
+        achievements.append("🥇 First Chat")
+
+    if pdf_count >= 5:
+        achievements.append("📄 PDF Explorer")
+
+    if image_count >= 5:
+        achievements.append("🖼 Vision Explorer")
+
+    if video_count >= 5:
+        achievements.append("🎥 Video Analyst")
+
+    if website_count >= 5:
+        achievements.append("🌐 Web Researcher")
+
+    if memory_count >= 10:
+        achievements.append("🧠 Memory Keeper")
+
+    if xp_points >= 500:
+        achievements.append("🏆 XP Champion")
+
+    if current_streak >= 3:
+        achievements.append("🔥 Consistent User")
+
+    if best_streak >= 7:
+        achievements.append("🚀 7 Day Streak")
+
+    # MOST USED TOOL
+
     tool_stats = {
 
         "PDF Assistant": pdf_count,
@@ -114,6 +164,8 @@ def dashboard(request):
         tool_stats,
         key=tool_stats.get
     )
+
+    # RECENT DATA
 
     recent_chats = ChatSession.objects.filter(
         user=request.user
@@ -134,8 +186,28 @@ def dashboard(request):
     recent_websites = Website.objects.filter(
         user=request.user
     ).order_by("-created_at")[:5]
+    
+    mission_chat_done = total_messages >= 5
+
+    mission_memory_done = memory_count >= 1
+
+    mission_pdf_done = pdf_count >= 1
+
+    mission_completed = (
+        mission_chat_done
+        and mission_memory_done
+        and mission_pdf_done
+    )
 
     context = {
+        
+        "mission_chat_done": mission_chat_done,
+
+        "mission_memory_done": mission_memory_done,
+
+        "mission_pdf_done": mission_pdf_done,
+
+        "mission_completed": mission_completed,
 
         "chat_count": chat_count,
         "total_messages": total_messages,
@@ -148,6 +220,13 @@ def dashboard(request):
 
         "xp_points": xp_points,
         "level": level,
+        "rank": rank,
+
+        "current_streak": current_streak,
+        "best_streak": best_streak,
+
+        "achievements": achievements,
+
         "next_level_xp": next_level_xp,
         "progress_percent": progress_percent,
 

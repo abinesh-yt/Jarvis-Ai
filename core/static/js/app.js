@@ -255,3 +255,110 @@ function fillPrompt(text){
     }
 
 }
+
+function showAchievement(text){
+
+    const popup =
+    document.getElementById(
+        "achievement-popup"
+    );
+
+    const content =
+    document.getElementById(
+        "achievement-content"
+    );
+
+    if(
+        !popup ||
+        !content
+    ){
+        return;
+    }
+
+    content.innerHTML =
+        text;
+
+    popup.classList.add(
+        "show"
+    );
+
+    setTimeout(
+        ()=>{
+            popup.classList.remove(
+                "show"
+            );
+        },
+        4000
+    );
+
+}
+
+const orb =
+document.getElementById(
+    "jarvis-orb"
+);
+
+const panel =
+document.getElementById(
+    "jarvis-panel"
+);
+
+if(
+    orb &&
+    panel
+){
+
+    orb.addEventListener(
+        "click",
+        ()=>{
+
+            panel.classList.toggle(
+                "show"
+            );
+
+        }
+    );
+
+}
+
+const jarvisData =
+document.getElementById(
+    "jarvis-data"
+);
+
+if(jarvisData){
+
+    const xp =
+    jarvisData.dataset.xp;
+
+    const level =
+    jarvisData.dataset.level;
+
+    const mission =
+    jarvisData.dataset.mission;
+
+    const xpElement =
+    document.getElementById(
+        "jarvis-xp"
+    );
+
+    const levelElement =
+    document.getElementById(
+        "jarvis-level"
+    );
+
+    const missionElement =
+    document.getElementById(
+        "jarvis-mission"
+    );
+
+    if(xpElement)
+        xpElement.innerText = xp;
+
+    if(levelElement)
+        levelElement.innerText = level;
+
+    if(missionElement)
+        missionElement.innerText = mission;
+
+}
